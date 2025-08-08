@@ -1,0 +1,35 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: rf-catalog-svc
+  cloud:
+    config:
+      uri: ${RF_CONFIG_SERVICE_URL:http://localhost:8888}
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+eureka:
+  instance:
+    hostname: ${RF_CATALOG_SVC_HOSTNAME:localhost}
+  client:
+    serviceUrl:
+      defaultZone: ${RF_EUREKA_SERVICE_URL:http://localhost:8761/eureka/}
+
+#logging:
+#  level:
+#    org.springframework.security: TRACE
+#    org.springframework.boot.actuate: INFO
+#    org.springframework.web: INFO
+#    org:
+#      hibernate:
+#        SQL: DEBUG
+#        type.descriptor.sql.BasicBinder: TRACE # Shows bound parameters
+#        stat: DEBUG # Hibernate statistics
+#        jpa.spi.NativeQueryConstructorTransformer: TRACE # Crucial for DTO mapping issues
+#        sql.results.internal.RowTransformerTupleTransformerAdapter: TRACE # Also helps with DTO mapping
+#      springframework:
+#        cloud.stream: DEBUG
+#        data.jpa: DEBUG
+#        orm.jpa: DEBUG
