@@ -20,7 +20,7 @@ class OpenApiConfig {
     @Value("\${RF_AUTH_SVC_HOSTNAME:localhost}")
     private lateinit var authHostname: String
 
-    @Value("\${RF_CATALOG_SVC_HOSTNAME:localhost}")
+    @Value("\${RF_CATALOG_SVC_HOSTNAME_EXTERNAL:localhost}")
     private lateinit var catalogHost: String
 
     @Bean
@@ -40,7 +40,7 @@ class OpenApiConfig {
             .servers(
                 listOf(
                     Server()
-                        .url("http://$catalogHost:8090/api/catalog/v1")
+                        .url("http://$catalogHost/api/catalog/v1")
                         .description("Основной адрес микро-сервиса")
                 )
             )

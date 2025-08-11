@@ -15,8 +15,9 @@ metadata:
   name: rf-catalog-svc
 data:
   hostname: catalog-svc
+  hostname-external: rights.flow.me
   profiles: local,kafka
-  catalog_db: pg-catalog-db-svc
+  catalog-db: pg-catalog-db-svc
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -63,6 +64,11 @@ spec:
                 configMapKeyRef:
                   name: rf-catalog-svc
                   key: hostname
+            - name: RF_CATALOG_SVC_HOSTNAME_EXTERNAL
+              valueFrom:
+                configMapKeyRef:
+                  name: rf-catalog-svc
+                  key: hostname-external
             - name: RF_AUTH_SVC_HOSTNAME
               valueFrom:
                 configMapKeyRef:
@@ -77,7 +83,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: rf-catalog-svc
-                  key: catalog_db
+                  key: catalog-db
             - name: PG_DB_USER
               valueFrom:
                 secretKeyRef:
