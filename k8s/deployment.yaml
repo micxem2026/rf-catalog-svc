@@ -88,6 +88,16 @@ spec:
                 secretKeyRef:
                   name: rf-catalog-secret
                   key: postgres-password
+            - name: RF_KAFKA_BROKERS
+              valueFrom:
+                configMapKeyRef:
+                  name: kafka-props
+                  key: brokers
+            - name: RF_SCHEMA_REGISTRY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: kafka-props
+                  key: schema-registry-url
 
           readinessProbe:
             httpGet:
