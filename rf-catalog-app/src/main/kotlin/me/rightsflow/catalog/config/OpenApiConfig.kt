@@ -17,10 +17,10 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class OpenApiConfig {
 
-    @Value("\${RF_AUTH_SVC_HOSTNAME:localhost}")
-    private lateinit var authHostname: String
+    //@Value("\${RF_AUTH_SVC_HOSTNAME:localhost}")
+    //private lateinit var authHostname: String
 
-    @Value("\${RF_CATALOG_SVC_HOSTNAME_EXTERNAL:localhost}")
+    @Value("\${RF_CATALOG_SVC_HOSTNAME_EXTERNAL:localhost:9000}")
     private lateinit var catalogHost: String
 
     @Bean
@@ -69,8 +69,8 @@ class OpenApiConfig {
                                     )*/
                                     .clientCredentials(
                                         OAuthFlow()
-                                            .tokenUrl("http://$authHostname:9000/auth/oauth2/token")
-                                            .refreshUrl("http://$authHostname:9000/auth/oauth2/token")
+                                            .tokenUrl("http://$catalogHost/auth/oauth2/token")
+                                            .refreshUrl("http://$catalogHost/auth/oauth2/token")
                                             .scopes(
                                                 Scopes()
                                                     .addString("read", "Чтение записей")
