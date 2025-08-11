@@ -15,7 +15,7 @@ RUN chmod +x ./gradlew && ./gradlew --no-daemon assemble
 FROM bellsoft/liberica-openjdk-alpine-musl:17.0.13-cds
 RUN apk update && apk add tzdata && apk --no-cache add curl
 RUN apk --no-cache add msttcorefonts-installer fontconfig && update-ms-fonts && fc-cache -f
-COPY --from=builder /src/build/libs/rf-catalog-svc.jar rf-catalog-svc.jar
+COPY --from=builder /src/rf-catalog-app/build/libs/rf-catalog-svc.jar rf-catalog-svc.jar
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-Xms256m", "-Xmx512m", "-jar","/rf-catalog-svc.jar"]
