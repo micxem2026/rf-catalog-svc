@@ -18,15 +18,4 @@ RUN apk --no-cache add msttcorefonts-installer fontconfig && update-ms-fonts && 
 COPY --from=builder /src/rf-catalog-app/build/libs/rf-catalog-svc.jar rf-catalog-svc.jar
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-ENTRYPOINT [
-    "java",
-    "-XX:+UseContainerSupport",
-    "-XX:+UseG1GC",
-    "-XX:ParallelGCThreads=2",
-    "-XX:ConcGCThreads=1",
-    "-Xms256m",
-    "-Xmx768m",
-    "-XX:MaxMetaspaceSize=128m",
-    "-jar",
-    "/rf-catalog-svc.jar"
-]
+ENTRYPOINT ["java","-XX:+UseContainerSupport","-XX:+UseG1GC","-XX:ParallelGCThreads=2","-XX:ConcGCThreads=1","-Xms256m","-Xmx768m","-XX:MaxMetaspaceSize=128m","-jar","/rf-catalog-svc.jar"]
