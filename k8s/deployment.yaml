@@ -8,6 +8,7 @@ data:
   # echo -n "users_db" | base64 -> dXNlcnNfZGI=
   postgres-password: cmYtT3duZXIyNQ==
   postgres-user: cmlnaHRzZmxvdw==
+  swagger-secret: bW1LLXc3d3hDZm1FdzdTdlBDbW1YbmN1SUZ4UWM2eEwtNjUxNWM0VUIwaw==
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -94,6 +95,11 @@ spec:
                 secretKeyRef:
                   name: rf-catalog-secret
                   key: postgres-password
+            - name: SWAGGER_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: rf-catalog-secret
+                  key: swagger-secret
             - name: RF_KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
@@ -125,10 +131,10 @@ spec:
             failureThreshold: 15
           resources:
             requests:
-              cpu: "150m"
+              cpu: "250m"
               memory: "256Mi"
             limits:
-              cpu: "300m"
+              cpu: "500m"
               memory: "512Mi"
       restartPolicy: Always
       imagePullSecrets:

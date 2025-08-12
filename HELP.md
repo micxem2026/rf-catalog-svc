@@ -10,4 +10,5 @@
 * **RF_PG_CATALOG_DB_SVC** `(postgresql.micxem)` - *имя сервиса базы данных*
 * **RF_PG_CATALOG_DB_SVC_PORT** `(5432)` - *порт сервиса базы данных*
 * **PG_DB_USER** `(rightsflow)` - *имя пользователя базы данных* 
-* **PG_DB_PASSWORD** - *пароль пользователя базы данных* 
+* **PG_DB_PASSWORD** - *пароль пользователя базы данных*
+* **SWAGGER_CLIENT_SECRET** - *секрет клиента Swagger*

@@ -2,7 +2,6 @@ package me.rightsflow.intersync.service
 
 import me.rightsflow.intersync.repository.KafkaBindingControlRepository
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.stream.binding.BindingService
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -26,11 +25,13 @@ class BindingControlService(
                     continue
                 }
                 when (control.bindingState.name) {
-                    "PAUSE" -> if (binding.isRunning) {
+                    "PAUSE" -> if (!binding.isPaused) {
                         binding.pause()
                         log.debug("Binding ${control.bindingName} state updated to ${control.bindingState}")
                     }
-                    "RESUME" -> if (binding.isPaused) { binding.resume()
+
+                    "RESUME" -> if (binding.isPaused) {
+                        binding.resume()
                         log.debug("Binding ${control.bindingName} state updated to ${control.bindingState}")
                     }
                 }
