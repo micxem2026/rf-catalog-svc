@@ -1,35 +1,43 @@
 package me.rightsflow.features.entity
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import me.rightsflow.common.entity.BaseAudit
+import org.hibernate.Hibernate
 
 @Entity
-@Table(name = "klf_feature_plain")
-data class FeaturePlain(
+@Table(
+    name = "KLF_FEATURE_PLAIN",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["ID_FEATURE_CATEGORY", "NAME"])]
+)
+class FeaturePlain : BaseAudit() {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plain_seq")
-    @SequenceGenerator(name = "plain_seq", sequenceName = "klf_feature_plain_id_seq", allocationSize = 1)
-    val id: Int? = null,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    val id: Int? = null
 
-    @Column(name = "name", nullable = false, length = 255)
-    var name: String,
+    @Column(name = "NAME", nullable = false, length = 255)
+    var name: String = ""
 
-    @Column(name = "id_feature_category", nullable = false)
-    var idFeatureCategory: Int,
+    @Column(name = "ID_FEATURE_CATEGORY", nullable = false)
+    var idFeatureCategory: Int = 0
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_feature_category", insertable = false, updatable = false)
-    val featureCategory: FeatureCategory? = null,
+    @JoinColumn(name = "ID_FEATURE_CATEGORY", insertable = false, updatable = false)
+    val featureCategory: FeatureCategory? = null
 
-    @Column(name = "created_by", nullable = false, length = 20)
-    val createdBy: String,
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
 
-    @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+        // Проверка на одинаковый реальный класс (без прокси)
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
 
-    @Column(name = "updated_by", length = 20)
-    var updatedBy: String? = null,
+        other as FeaturePlain
 
-    @Column(name = "updated_at")
-    var updatedAt: LocalDateTime? = null
-)
+        // Считаем равными только если id != null и совпадает
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
+
+}

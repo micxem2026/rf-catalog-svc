@@ -8,28 +8,40 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.data.web.config.EnableSpringDataWebSupport
 
 
 @SpringBootApplication(
     scanBasePackages = [
         "me.rightsflow.catalog",
         "me.rightsflow.features",
-        "me.rightsflow.intersync"
+        "me.rightsflow.intersync",
+        "me.rightsflow.common",
+        "me.rightsflow.righttypes",
+        "me.rightsflow.oips",
+        "me.rightsflow.parties"
     ]
 )
-@EnableDiscoveryClient
 @EnableJpaRepositories(
     basePackages = [
         "me.rightsflow.features.repository",
-        "me.rightsflow.intersync.repository"
+        "me.rightsflow.intersync.repository",
+        "me.rightsflow.righttypes.repository",
+        "me.rightsflow.oips.repository",
+        "me.rightsflow.parties.repository"
     ]
 )
 @EntityScan(
     basePackages = [
         "me.rightsflow.features.entity",
-        "me.rightsflow.intersync.entity"
+        "me.rightsflow.intersync.entity",
+        "me.rightsflow.righttypes.entity",
+        "me.rightsflow.oips.entity",
+        "me.rightsflow.parties.entity"
     ]
 )
+@EnableDiscoveryClient
+@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 class RfCatalogAppApplication : CommandLineRunner {
 
     @Autowired

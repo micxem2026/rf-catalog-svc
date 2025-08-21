@@ -1,13 +1,12 @@
-package me.rightsflow.features.exception
+package me.rightsflow.common.exception
 
 import io.swagger.v3.oas.annotations.media.Schema
+import me.rightsflow.common.config.SecuritySubjectProvider
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.AccessDeniedException
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
+import org.springframework.validation.BindingResult
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -16,7 +15,9 @@ import org.springframework.web.context.request.WebRequest
 import java.time.LocalDateTime
 
 @RestControllerAdvice
-class GlobalExceptionHandler {
+class GlobalExceptionHandler(
+    val securitySubjectProvider: SecuritySubjectProvider
+) {
 
     private val log = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
@@ -26,12 +27,11 @@ class GlobalExceptionHandler {
         request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         log.error("Entity not found: ${ex.message}")
-        val errorResponse = createErrorResponse(
+        return createErrorResponse(
             request = request,
             status = HttpStatus.NOT_FOUND,
             message = "Entity not found with id: ${ex.entityId}"
         )
-        return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
     }
 
     @ExceptionHandler(CyclicReferenceException::class)
@@ -40,12 +40,11 @@ class GlobalExceptionHandler {
         request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         log.error("Cyclic reference detected: ${ex.message}")
-        val errorResponse = createErrorResponse(
+        return createErrorResponse(
             request = request,
             status = HttpStatus.CONFLICT,
             message = ex.message ?: "Cyclic reference detected"
         )
-        return ResponseEntity(errorResponse, HttpStatus.CONFLICT)
     }
 
     @ExceptionHandler(DataIntegrityViolationException::class)
@@ -54,12 +53,16 @@ class GlobalExceptionHandler {
         request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         log.error("Data integrity violation: ${ex.message}")
-        val errorResponse = createErrorResponse(
+        SqlStateExtractor.extractSqlState(ex)?.let { state ->
+            if (state.first == "23505") {
+                return createErrorResponse(request, HttpStatus.CONFLICT, "${state.second}, SQL State: ${state.first}")
+            }
+        }
+        return createErrorResponse(
             request = request,
             status = HttpStatus.CONFLICT,
             message = "Data integrity violation - entity is being used by other entities"
         )
-        return ResponseEntity(errorResponse, HttpStatus.CONFLICT)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
@@ -68,18 +71,13 @@ class GlobalExceptionHandler {
         request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         log.error("Validation error: ${ex.message}")
-        val errors = ex.bindingResult.allErrors.joinToString("; ") { error ->
-            when (error) {
-                is FieldError -> "${error.field}: ${error.defaultMessage}"
-                else -> error.defaultMessage ?: "Validation error"
-            }
-        }
-        val errorResponse = createErrorResponse(
+        val errors = ex.bindingResult.toErrorMessage()
+
+        return createErrorResponse(
             request = request,
             status = HttpStatus.BAD_REQUEST,
             message = "Validation failed: $errors"
         )
-        return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
@@ -88,12 +86,11 @@ class GlobalExceptionHandler {
         request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         log.error("Illegal argument: ${ex.message}")
-        val errorResponse = createErrorResponse(
+        return createErrorResponse(
             request = request,
             status = HttpStatus.BAD_REQUEST,
             message = ex.message ?: "Invalid argument"
         )
-        return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(AccessDeniedException::class)
@@ -102,47 +99,49 @@ class GlobalExceptionHandler {
         request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         log.error("Access denied: ${ex.message}")
-        val errorResponse = createErrorResponse(
+        return createErrorResponse(
             request = request,
             status = HttpStatus.FORBIDDEN,
             message = HttpStatus.FORBIDDEN.reasonPhrase
         )
-        return ResponseEntity(errorResponse, HttpStatus.FORBIDDEN)
     }
 
-    @ExceptionHandler(Exception::class)
-    fun handleGenericException(
-        ex: Exception,
-        request: WebRequest
-    ): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(Throwable::class)
+    fun handleOther(ex: Throwable, req: WebRequest): ResponseEntity<ErrorResponse> {
         log.error("Unexpected error: ${ex.message}", ex)
-        val errorResponse = createErrorResponse(
-            request = request,
-            status = HttpStatus.INTERNAL_SERVER_ERROR,
-            message = HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase
-        )
-        return ResponseEntity(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-
-    private fun createErrorResponse(
-        request: WebRequest,
-        status: HttpStatus,
-        message: String
-    ): ErrorResponse {
-        val authentication = SecurityContextHolder.getContext().authentication
-        val subject = when (authentication) {
-            is JwtAuthenticationToken -> authentication.token.subject
-            else -> "anonymous"
+        // Спец случай: sqlstate 20101, 20102
+        SqlStateExtractor.extractSqlState(ex)?.let { state ->
+            if (state.first == "20101" || state.first == "20102") {
+                return createErrorResponse(req, HttpStatus.CONFLICT, "${state.second}, SQL State: ${state.first}")
+            }
         }
-
-        return ErrorResponse(
-            requestUri = request.getDescription(false).removePrefix("uri="),
-            sub = subject,
-            status = status.value(),
-            message = message,
-            timestamp = LocalDateTime.now()
-        )
+        return createErrorResponse(req, HttpStatus.INTERNAL_SERVER_ERROR, ex.message ?: "Internal error")
     }
+
+
+    private fun createErrorResponse(request: WebRequest, status: HttpStatus, message: String) =
+        ResponseEntity.status(status).body(
+         ErrorResponse(
+                    requestUri = request.getDescription(false).removePrefix("uri="),
+                    sub = securitySubjectProvider.currentSub(),
+                    status = status.value(),
+                    message = message,
+                    timestamp = LocalDateTime.now()
+                )
+        )
+
+    fun BindingResult.toErrorMessage(separator: String = "; "): String {
+        val messages = mutableListOf<String>()
+
+        // Ошибки конкретных полей
+        fieldErrors.forEach { messages.add("${it.field}: ${it.defaultMessage}") }
+
+        // Глобальные ошибки (без поля)
+        globalErrors.forEach { messages.add(it.defaultMessage ?: "Validation error") }
+
+        return messages.joinToString(separator)
+    }
+
 }
 
 @Schema(description = "Ответ с информацией об ошибке")

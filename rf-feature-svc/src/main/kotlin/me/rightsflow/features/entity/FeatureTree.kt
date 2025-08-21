@@ -5,51 +5,56 @@ import io.hypersistence.utils.hibernate.type.range.Range
 import jakarta.persistence.*
 import org.hibernate.annotations.Type
 import java.time.LocalDate
-import java.time.LocalDateTime
+import me.rightsflow.common.entity.BaseAudit
+import org.hibernate.Hibernate
 
 @Entity
-@Table(name = "klf_feature_tree")
-data class FeatureTree(
+@Table(name = "KLF_FEATURE_TREE")
+class FeatureTree: BaseAudit() {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tree_seq")
-    @SequenceGenerator(name = "tree_seq", sequenceName = "klf_feature_tree_id_seq", allocationSize = 1)
-    val id: Int? = null,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    val id: Int? = null
 
-    @Column(name = "id_parent")
-    var idParent: Int? = null,
+    @Column(name = "ID_PARENT")
+    var idParent: Int? = null
 
-    @Column(name = "id_feature_category", nullable = false)
-    val idFeatureCategory: Int,
+    @Column(name = "ID_FEATURE_CATEGORY", nullable = false)
+    val idFeatureCategory: Int = 0
 
-    @Column(name = "id_feature_plain", nullable = false)
-    var idFeaturePlain: Int,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_parent", insertable = false, updatable = false)
-    val parent: FeatureTree? = null,
+    @Column(name = "ID_FEATURE_PLAIN", nullable = false)
+    var idFeaturePlain: Int = 0
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_feature_category", insertable = false, updatable = false)
-    val featureCategory: FeatureCategory? = null,
+    @JoinColumn(name = "ID_PARENT", insertable = false, updatable = false)
+    val parent: FeatureTree? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_feature_plain", insertable = false, updatable = false)
-    val featurePlain: FeaturePlain? = null,
+    @JoinColumn(name = "ID_FEATURE_CATEGORY", insertable = false, updatable = false)
+    val featureCategory: FeatureCategory? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_FEATURE_PLAIN", insertable = false, updatable = false)
+    val featurePlain: FeaturePlain? = null
 
     //@JdbcTypeCode(SqlTypes.OTHER)
     @Type(PostgreSQLRangeType::class)
-    @Column(name = "validity_period", columnDefinition = "daterange", nullable = false)
-    var validityPeriod: Range<LocalDate>,
+    @Column(name = "VALIDITY_PERIOD", columnDefinition = "daterange", nullable = false)
+    var validityPeriod: Range<LocalDate> = Range.emptyRange(LocalDate::class.java)
 
-    @Column(name = "created_by", nullable = false, length = 20)
-    val createdBy: String,
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
 
-    @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+        // Проверка на одинаковый реальный класс (без прокси)
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
 
-    @Column(name = "updated_by", length = 20)
-    var updatedBy: String? = null,
+        other as FeatureTree
 
-    @Column(name = "updated_at")
-    var updatedAt: LocalDateTime? = null
-)
+        // Считаем равными только если id != null и совпадает
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
+}

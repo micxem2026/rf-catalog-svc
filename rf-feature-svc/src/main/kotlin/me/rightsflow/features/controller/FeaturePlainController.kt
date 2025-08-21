@@ -3,24 +3,23 @@ package me.rightsflow.features.controller
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import me.rightsflow.features.config.CommonSecurityResponses
-import me.rightsflow.features.config.ConflictResponse
-import me.rightsflow.features.config.InternalServerErrorResponse
-import me.rightsflow.features.config.NotFoundResponse
-import me.rightsflow.features.config.ValidationErrorResponse
+import me.rightsflow.common.config.CommonSecurityResponses
+import me.rightsflow.common.config.ConflictResponse
+import me.rightsflow.common.config.InternalServerErrorResponse
+import me.rightsflow.common.config.NotFoundResponse
+import me.rightsflow.common.config.ValidationErrorResponse
 import me.rightsflow.features.dto.request.CreateFeaturePlainRequest
 import me.rightsflow.features.dto.request.UpdateFeaturePlainRequest
 import me.rightsflow.features.dto.response.FeaturePlainResponse
 import me.rightsflow.features.service.FeaturePlainService
 import org.springdoc.core.annotations.ParameterObject
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.data.web.PagedModel
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -58,8 +57,8 @@ class FeaturePlainController(
         @Parameter(description = "ID категории для фильтрации") @RequestParam(required = true) categoryId: Int,
         @Parameter(description = "Имя для поиска") @RequestParam(required = false) name: String?,
         @PageableDefault(sort = ["id"], direction = Sort.Direction.ASC) @ParameterObject pageable: Pageable
-    ): Page<FeaturePlainResponse> {
-        return featurePlainService.findAll(categoryId, name, pageable)
+    ): PagedModel<FeaturePlainResponse> {
+        return PagedModel(featurePlainService.findAll(categoryId, name, pageable))
     }
 
     @PostMapping

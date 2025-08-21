@@ -1,28 +1,33 @@
 package me.rightsflow.features.entity
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import me.rightsflow.common.entity.BaseAudit
+import org.hibernate.Hibernate
 
 @Entity
-@Table(name = "klf_feature_category")
-data class FeatureCategory(
+@Table(name = "KLF_FEATURE_CATEGORY")
+class FeatureCategory : BaseAudit() {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq")
-    @SequenceGenerator(name = "category_seq", sequenceName = "klf_feature_category_id_seq", allocationSize = 1)
-    val id: Int? = null,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    var id: Int? = null
 
-    @Column(name = "name", nullable = false, length = 50)
-    var name: String,
+    @Column(name = "NAME", nullable = false, length = 50)
+    var name: String = ""
 
-    @Column(name = "created_by", nullable = false, length = 20)
-    val createdBy: String,
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
 
-    @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+        // Проверка на одинаковый реальный класс (без прокси)
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
 
-    @Column(name = "updated_by", length = 20)
-    var updatedBy: String? = null,
+        other as FeatureCategory
 
-    @Column(name = "updated_at")
-    var updatedAt: LocalDateTime? = null
-)
+        // Считаем равными только если id != null и совпадает
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
+}

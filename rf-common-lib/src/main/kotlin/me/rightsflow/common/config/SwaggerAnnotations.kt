@@ -1,10 +1,10 @@
-package me.rightsflow.features.config
+package me.rightsflow.common.config
 
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import me.rightsflow.features.exception.ErrorResponse
+import me.rightsflow.common.exception.ErrorResponse
 
 
 // Общие ошибки аутентификации и авторизации

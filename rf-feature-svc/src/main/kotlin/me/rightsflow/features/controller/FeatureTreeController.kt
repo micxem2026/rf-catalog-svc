@@ -3,19 +3,17 @@ package me.rightsflow.features.controller
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import me.rightsflow.features.config.CommonSecurityResponses
-import me.rightsflow.features.config.ConflictResponse
-import me.rightsflow.features.config.InternalServerErrorResponse
-import me.rightsflow.features.config.NotFoundResponse
-import me.rightsflow.features.config.ValidationErrorResponse
+import me.rightsflow.common.config.CommonSecurityResponses
+import me.rightsflow.common.config.ConflictResponse
+import me.rightsflow.common.config.InternalServerErrorResponse
+import me.rightsflow.common.config.NotFoundResponse
+import me.rightsflow.common.config.ValidationErrorResponse
 import me.rightsflow.features.dto.request.CreateFeatureTreeRequest
 import me.rightsflow.features.dto.request.UpdateFeatureTreeRequest
 import me.rightsflow.features.dto.response.FeatureTreeProjection
-import me.rightsflow.features.dto.response.FeatureTreeResponse
 import me.rightsflow.features.service.FeatureTreeService
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -26,7 +24,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/features/trees")
 @Tag(name = "Feature Trees", description = "API для работы с деревом характеристик")
 @SecurityRequirement(name = "bearerAuth")
-@SecurityRequirement(name = "oauth2", scopes = ["read", "create", "update", "delete", "execute","admin", "user", "manager"])
+@SecurityRequirement(
+    name = "oauth2",
+    scopes = ["read", "create", "update", "delete", "execute", "admin", "user", "manager"]
+)
 class FeatureTreeController(
     private val featureTreeService: FeatureTreeService
 ) {

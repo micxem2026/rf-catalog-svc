@@ -1,19 +1,12 @@
 package me.rightsflow.features.service
 
+import me.rightsflow.common.exception.EntityNotFoundException
 import me.rightsflow.features.dto.request.CreateFeatureTreeRequest
 import me.rightsflow.features.dto.request.UpdateFeatureTreeRequest
-import me.rightsflow.features.dto.response.FeatureTreePlainProjection
-import me.rightsflow.features.dto.response.FeatureTreePlainResponse
-import me.rightsflow.features.dto.response.FeatureTreeProjection
-import me.rightsflow.features.dto.response.FeatureTreeRecursiveProjection
-import me.rightsflow.features.dto.response.FeatureTreeRecursiveResponse
-import me.rightsflow.features.exception.CyclicReferenceException
-import me.rightsflow.features.exception.EntityNotFoundException
+import me.rightsflow.features.dto.response.*
 import me.rightsflow.features.repository.FeaturePlainRepository
 import me.rightsflow.features.repository.FeatureTreeRepository
-import org.postgresql.util.PSQLException
 import org.slf4j.LoggerFactory
-import org.springframework.dao.DataAccessException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -68,27 +61,16 @@ class FeatureTreeService(
             }
         }
 
-        return try {
-            val generatedId = featureTreeRepository.addFeatureTree(
-                idParent = request.idParent,
-                idFeaturePlain = request.idFeaturePlain,
-                userId = userId,
-                beginDate = request.beginDate,
-                endDate = request.endDate
-            )
-            log.debug("Created feature tree with id: $generatedId")
-            findById(generatedId)
-        } catch (e: DataAccessException) {
-            var cause = e.cause
-            while (cause != null) {
-                if (cause is PSQLException && cause.sqlState == "20101") {
-                    log.error(cause.message?: "Cyclic reference detected in feature tree")
-                    throw CyclicReferenceException(cause.message ?: "Cyclic reference detected in feature tree")
-                }
-                cause = cause.cause
-            }
-            throw e
-        }
+        val generatedId = featureTreeRepository.addFeatureTree(
+            idParent = request.idParent,
+            idFeaturePlain = request.idFeaturePlain,
+            userId = userId,
+            beginDate = request.beginDate,
+            endDate = request.endDate
+        )
+        log.debug("Created feature tree with id: $generatedId")
+        return findById(generatedId)
+
     }
 
     fun update(id: Int, request: UpdateFeatureTreeRequest, userId: String): FeatureTreeProjection {
@@ -119,32 +101,17 @@ class FeatureTreeService(
             }
         }
 
-        return try {
-            featureTreeRepository.updateFeatureTree(
-                id = id,
-                idParent = newIdParent,
-                idFeaturePlain = newIdFeaturePlain,
-                userId = userId,
-                beginDate = request.beginDate,
-                endDate = request.endDate
-            )
-            log.debug("Updated feature tree with id: $id")
-            findById(id)
-        } catch (e: DataAccessException) {
-            var cause = e.cause
-            while (cause != null) {
-                if (cause is PSQLException && cause.sqlState == "20101") {
-                    log.error(cause.message?: "Cyclic reference detected in feature tree")
-                    throw CyclicReferenceException(cause.message ?: "Cyclic reference detected in feature tree")
-                }
-                if (cause is PSQLException && cause.sqlState == "20102") {
-                    log.error(cause.message?: "Update Error! Conflict with existing element!")
-                    throw CyclicReferenceException(cause.message ?: "Update Error! Conflict with existing element!")
-                }
-                cause = cause.cause
-            }
-            throw e
-        }
+        featureTreeRepository.updateFeatureTree(
+            id = id,
+            idParent = newIdParent,
+            idFeaturePlain = newIdFeaturePlain,
+            userId = userId,
+            beginDate = request.beginDate,
+            endDate = request.endDate
+        )
+        log.debug("Updated feature tree with id: $id")
+        return findById(id)
+
     }
 
     fun deleteById(id: Int) {
@@ -174,7 +141,7 @@ class FeatureTreeService(
             node.updatedBy,
             node.updatedAt,
             children
-            )
+        )
     }
 
     private fun calculateLevel(node: FeatureTreePlainProjection, allNodes: List<FeatureTreePlainProjection>): Int {
@@ -202,6 +169,7 @@ class FeatureTreeService(
             node.createdAt,
             node.updatedBy,
             node.updatedAt,
-            level)
+            level
+        )
     }
 }

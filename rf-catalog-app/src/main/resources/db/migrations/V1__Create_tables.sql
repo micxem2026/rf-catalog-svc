@@ -5,9 +5,9 @@ CREATE TABLE IF NOT EXISTS klf_feature_category (
                                       id SERIAL PRIMARY KEY,
                                       name VARCHAR(50) NOT NULL,
                                       created_by VARCHAR(20) NOT NULL,
-                                      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                      created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                       updated_by VARCHAR(20),
-                                      updated_at TIMESTAMP
+                                      updated_at TIMESTAMPTZ
 );
 
 -- Создание таблицы простых характеристик
@@ -16,9 +16,9 @@ CREATE TABLE IF NOT EXISTS klf_feature_plain (
                                    name VARCHAR(255) NOT NULL,
                                    id_feature_category INTEGER NOT NULL,
                                    created_by VARCHAR(20) NOT NULL,
-                                   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                    updated_by VARCHAR(20),
-                                   updated_at TIMESTAMP,
+                                   updated_at TIMESTAMPTZ,
                                    CONSTRAINT fk_klf_feature_plain_category FOREIGN KEY (id_feature_category)
                                        REFERENCES klf_feature_category(id)
 );
@@ -31,9 +31,9 @@ CREATE TABLE IF NOT EXISTS klf_feature_tree (
                                   id_feature_plain INTEGER NOT NULL,
                                   validity_period daterange NOT NULL DEFAULT '(,)'::daterange,
                                   created_by VARCHAR(20) NOT NULL,
-                                  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                   updated_by VARCHAR(20),
-                                  updated_at TIMESTAMP,
+                                  updated_at TIMESTAMPTZ,
                                   CONSTRAINT fk_klf_feature_tree_parent FOREIGN KEY (id_parent)
                                       REFERENCES klf_feature_tree(id),
                                   CONSTRAINT fk_klf_feature_tree_category FOREIGN KEY (id_feature_category)

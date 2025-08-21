@@ -17,9 +17,13 @@ kotlin {
 
 dependencies {
     // Modules
-    implementation(project(":rf-feature-svc"))
+    implementation(project(":rf-common-lib"))
     implementation(project(":rf-intersync-svc"))
- 
+    implementation(project(":rf-feature-svc"))
+    implementation(project(":rf-righttype-svc"))
+    implementation(project(":rf-oip-svc"))
+    implementation(project(":rf-parties-svc"))
+
     // Spring Boot starters
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

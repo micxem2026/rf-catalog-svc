@@ -8,6 +8,8 @@ kotlin {
 
 dependencies {
 
+    implementation(project(":rf-common-lib"))
+
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:${property("springBootVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:${property("springBootVersion")}")

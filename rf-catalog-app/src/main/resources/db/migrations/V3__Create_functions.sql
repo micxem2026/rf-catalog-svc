@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION ins_klf_feature_tree(
+CREATE OR REPLACE FUNCTION rightsflow.ins_klf_feature_tree(
     p_id_parent INTEGER,
     p_id_feature_plain INTEGER,
     p_created_by VARCHAR(20),
@@ -69,7 +69,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION upd_klf_feature_tree(
+CREATE OR REPLACE FUNCTION rightsflow.upd_klf_feature_tree(
     p_id INTEGER,
     p_id_parent INTEGER,
     p_id_feature_plain INTEGER,

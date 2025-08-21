@@ -3,7 +3,7 @@ package me.rightsflow.catalog.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import me.rightsflow.features.exception.ErrorResponse
+import me.rightsflow.common.exception.ErrorResponse
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint

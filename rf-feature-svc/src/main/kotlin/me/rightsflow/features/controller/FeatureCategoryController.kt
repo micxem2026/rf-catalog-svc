@@ -6,20 +6,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import me.rightsflow.features.config.CommonSecurityResponses
-import me.rightsflow.features.config.ConflictResponse
-import me.rightsflow.features.config.InternalServerErrorResponse
-import me.rightsflow.features.config.NotFoundResponse
-import me.rightsflow.features.config.ValidationErrorResponse
+import me.rightsflow.common.config.CommonSecurityResponses
+import me.rightsflow.common.config.ConflictResponse
+import me.rightsflow.common.config.InternalServerErrorResponse
+import me.rightsflow.common.config.NotFoundResponse
+import me.rightsflow.common.config.ValidationErrorResponse
 import me.rightsflow.features.dto.request.CreateFeatureCategoryRequest
 import me.rightsflow.features.dto.request.UpdateFeatureCategoryRequest
 import me.rightsflow.features.dto.response.FeatureCategoryResponse
 import me.rightsflow.features.service.FeatureCategoryService
 import org.springdoc.core.annotations.ParameterObject
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.data.web.PagedModel
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
@@ -29,7 +29,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/features/categories")
 @Tag(name = "Feature Categories", description = "API для работы с категориями характеристик")
 @SecurityRequirement(name = "bearerAuth")
-@SecurityRequirement(name = "oauth2", scopes = ["read", "create", "update", "delete", "execute", "admin", "user", "manager"])
+@SecurityRequirement(
+    name = "oauth2",
+    scopes = ["read", "create", "update", "delete", "execute", "admin", "user", "manager"]
+)
 class FeatureCategoryController(
     private val featureCategoryService: FeatureCategoryService
 ) {
@@ -55,8 +58,8 @@ class FeatureCategoryController(
     @InternalServerErrorResponse
     fun findAll(
         @PageableDefault(sort = ["id"], direction = Sort.Direction.ASC) @ParameterObject pageable: Pageable
-    ): Page<FeatureCategoryResponse> {
-        return featureCategoryService.findAll(pageable)
+    ): PagedModel<FeatureCategoryResponse> {
+        return PagedModel(featureCategoryService.findAll(pageable))
     }
 
     @PostMapping

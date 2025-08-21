@@ -4,7 +4,7 @@ import me.rightsflow.features.dto.request.CreateFeaturePlainRequest
 import me.rightsflow.features.dto.request.UpdateFeaturePlainRequest
 import me.rightsflow.features.dto.response.FeaturePlainResponse
 import me.rightsflow.features.entity.FeaturePlain
-import me.rightsflow.features.exception.EntityNotFoundException
+import me.rightsflow.common.exception.EntityNotFoundException
 import me.rightsflow.features.repository.FeatureCategoryRepository
 import me.rightsflow.features.repository.FeaturePlainRepository
 import org.slf4j.LoggerFactory
@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @Service
 @Transactional
@@ -51,11 +51,11 @@ class FeaturePlainService(
             throw EntityNotFoundException(request.idFeatureCategory)
         }
 
-        val featurePlain = FeaturePlain(
-            name = request.name,
-            idFeatureCategory = request.idFeatureCategory,
+        val featurePlain = FeaturePlain().apply {
+            name = request.name
+            idFeatureCategory = request.idFeatureCategory
             createdBy = userId
-        )
+        }
 
         val savedFeaturePlain = featurePlainRepository.save(featurePlain)
         log.debug("Created feature plain with id: ${savedFeaturePlain.id}")
@@ -83,7 +83,7 @@ class FeaturePlainService(
         }
 
         featurePlain.updatedBy = userId
-        featurePlain.updatedAt = LocalDateTime.now()
+        featurePlain.updatedAt = OffsetDateTime.now()
 
         featurePlainRepository.save(featurePlain)
         log.debug("Updated feature plain with id: $id")
@@ -107,9 +107,9 @@ class FeaturePlainService(
             idFeatureCategory = featurePlain.idFeatureCategory,
             categoryName = featurePlain.featureCategory?.name ?: "",
             createdBy = featurePlain.createdBy,
-            createdAt = featurePlain.createdAt,
+            createdAt = featurePlain.createdAt.toLocalDateTime(),
             updatedBy = featurePlain.updatedBy,
-            updatedAt = featurePlain.updatedAt
+            updatedAt = featurePlain.updatedAt?.toLocalDateTime()
         )
     }
 }

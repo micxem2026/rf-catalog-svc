@@ -20,7 +20,7 @@ class OpenApiConfig {
     //@Value("\${RF_AUTH_SVC_HOSTNAME:localhost}")
     //private lateinit var authHostname: String
 
-    @Value("\${RF_CATALOG_SVC_HOSTNAME_EXTERNAL:localhost:9000}")
+    @Value("\${RF_CATALOG_SVC_HOSTNAME_EXTERNAL:localhost:8090}")
     private lateinit var catalogHost: String
 
     @Bean
@@ -97,7 +97,7 @@ class OpenApiConfig {
             // Глобальные требования безопасности
             .security(
                 listOf(
-                    SecurityRequirement().addList("oauth2", listOf("read", "create", "update", "delete", "execute")),
+                    SecurityRequirement().addList("oauth2", listOf("read", "create", "update", "delete", "execute", "admin", "user", "manager")),
                     SecurityRequirement().addList("bearerAuth")
                 )
             )
