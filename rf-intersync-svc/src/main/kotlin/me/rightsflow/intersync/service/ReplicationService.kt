@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class UserReplicationService(
+class ReplicationService(
     private val syncService: SyncService
 ) {
 
-    private val log = LoggerFactory.getLogger(UserReplicationService::class.java)
+    private val log = LoggerFactory.getLogger(ReplicationService::class.java)
 
     @Transactional
             /*    @Retryable(

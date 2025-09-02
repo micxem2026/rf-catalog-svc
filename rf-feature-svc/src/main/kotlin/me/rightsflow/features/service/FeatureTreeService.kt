@@ -1,9 +1,11 @@
 package me.rightsflow.features.service
 
-import me.rightsflow.common.exception.EntityNotFoundException
+import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.features.dto.request.CreateFeatureTreeRequest
 import me.rightsflow.features.dto.request.UpdateFeatureTreeRequest
 import me.rightsflow.features.dto.response.*
+import me.rightsflow.features.entity.FeaturePlain
+import me.rightsflow.features.entity.FeatureTree
 import me.rightsflow.features.repository.FeaturePlainRepository
 import me.rightsflow.features.repository.FeatureTreeRepository
 import org.slf4j.LoggerFactory
@@ -23,7 +25,7 @@ class FeatureTreeService(
     fun findById(id: Int): FeatureTreeProjection {
         log.debug("Finding feature tree by id: $id")
         val featureTree = featureTreeRepository.findByIdWithRelations(id)
-            ?: throw EntityNotFoundException(id)
+            ?: throw EntityNotFoundWithClsException(id, FeatureTree::class.java)
         return featureTree
     }
 
@@ -51,13 +53,13 @@ class FeatureTreeService(
 
         // Проверяем существование простой характеристики
         if (!featurePlainRepository.existsById(request.idFeaturePlain)) {
-            throw EntityNotFoundException(request.idFeaturePlain)
+            throw EntityNotFoundWithClsException(request.idFeaturePlain, FeaturePlain::class.java)
         }
 
         // Проверяем существование родителя, если указан
         request.idParent?.let { parentId ->
             if (!featureTreeRepository.existsById(parentId)) {
-                throw EntityNotFoundException(parentId)
+                throw EntityNotFoundWithClsException(parentId, FeatureTree::class.java)
             }
         }
 
@@ -78,7 +80,7 @@ class FeatureTreeService(
 
         // Проверяем существование записи
         if (!featureTreeRepository.existsById(id)) {
-            throw EntityNotFoundException(id)
+            throw EntityNotFoundWithClsException(id, FeatureTree::class.java)
         }
 
         val currentTree = featureTreeRepository.findByIdWithRelations(id)!!
@@ -90,14 +92,14 @@ class FeatureTreeService(
         // Проверяем существование простой характеристики, если она изменяется
         request.idFeaturePlain?.let { plainId ->
             if (!featurePlainRepository.existsById(plainId)) {
-                throw EntityNotFoundException(plainId)
+                throw EntityNotFoundWithClsException(plainId, FeaturePlain::class.java)
             }
         }
 
         // Проверяем существование родителя, если он изменяется
         request.idParent?.let { parentId ->
             if (!featureTreeRepository.existsById(parentId)) {
-                throw EntityNotFoundException(parentId)
+                throw EntityNotFoundWithClsException(parentId, FeatureTree::class.java)
             }
         }
 
@@ -117,7 +119,7 @@ class FeatureTreeService(
     fun deleteById(id: Int) {
         log.debug("Deleting feature tree with id: $id")
         if (!featureTreeRepository.existsById(id)) {
-            throw EntityNotFoundException(id)
+            throw EntityNotFoundWithClsException(id, FeatureTree::class.java)
         }
         featureTreeRepository.deleteById(id)
         log.debug("Deleted feature tree with id: $id")

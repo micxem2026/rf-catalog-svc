@@ -3,7 +3,7 @@ package me.rightsflow.intersync.scheduler
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import me.rightsflow.intersync.config.MessageConverter
 import me.rightsflow.intersync.dto.UserAvroMessage
-import me.rightsflow.intersync.service.UserReplicationService
+import me.rightsflow.intersync.service.ReplicationService
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -24,7 +24,7 @@ class DlqScheduler(
     @Value("\${spring.cloud.stream.kafka.binder.configuration.schema.registry.url}") // Получаем URL реестра
     private val schemaRegistryUrl: String,
     private val kafkaTemplate: KafkaTemplate<String, GenericRecord?>,
-    private val userReplicationService: UserReplicationService,
+    private val replicationService: ReplicationService,
     @Value("\${spring.cloud.stream.kafka.bindings.userProcessor-in-0.consumer.dlq-name}")
     private val dlqTopic: String
 ) {
@@ -84,7 +84,7 @@ class DlqScheduler(
 
                             is GenericRecord -> MessageConverter.convertToUserAvroMessage(record.value() as GenericRecord)
                         }
-                        userReplicationService.processUser(syncId, userDto)
+                        replicationService.processUser(syncId, userDto)
                         successCount++
                     }
                     log.debug("Successfully processed message for user: ${keyString} [partition=${record.partition()}, offset=${record.offset()}]")

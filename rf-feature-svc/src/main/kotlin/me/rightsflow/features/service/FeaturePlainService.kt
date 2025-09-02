@@ -4,7 +4,8 @@ import me.rightsflow.features.dto.request.CreateFeaturePlainRequest
 import me.rightsflow.features.dto.request.UpdateFeaturePlainRequest
 import me.rightsflow.features.dto.response.FeaturePlainResponse
 import me.rightsflow.features.entity.FeaturePlain
-import me.rightsflow.common.exception.EntityNotFoundException
+import me.rightsflow.common.exception.EntityNotFoundWithClsException
+import me.rightsflow.features.entity.FeatureCategory
 import me.rightsflow.features.repository.FeatureCategoryRepository
 import me.rightsflow.features.repository.FeaturePlainRepository
 import org.slf4j.LoggerFactory
@@ -27,7 +28,7 @@ class FeaturePlainService(
     fun findById(id: Int): FeaturePlainResponse {
         log.debug("Finding feature plain by id: $id")
         val featurePlain = featurePlainRepository.findByIdWithCategory(id)
-            ?: throw EntityNotFoundException(id)
+            ?: throw EntityNotFoundWithClsException(id, FeaturePlain::class.java)
         return mapToResponse(featurePlain)
     }
 
@@ -48,7 +49,7 @@ class FeaturePlainService(
 
         // Проверяем существование категории
         if (!featureCategoryRepository.existsById(request.idFeatureCategory)) {
-            throw EntityNotFoundException(request.idFeatureCategory)
+            throw EntityNotFoundWithClsException(request.idFeatureCategory, FeatureCategory::class.java)
         }
 
         val featurePlain = FeaturePlain().apply {
@@ -66,7 +67,7 @@ class FeaturePlainService(
     fun update(id: Int, request: UpdateFeaturePlainRequest, userId: String): FeaturePlainResponse {
         log.debug("Updating feature plain with id: $id by user: $userId")
         val featurePlain = featurePlainRepository.findById(id)
-            .orElseThrow { EntityNotFoundException(id) }
+            .orElseThrow { EntityNotFoundWithClsException(id, FeaturePlain::class.java) }
 
         request.name?.let {
             if (it.isNotBlank()) {
@@ -77,7 +78,7 @@ class FeaturePlainService(
         request.idFeatureCategory?.let { categoryId ->
             // Проверяем существование категории
             if (!featureCategoryRepository.existsById(categoryId)) {
-                throw EntityNotFoundException(categoryId)
+                throw EntityNotFoundWithClsException(categoryId, FeatureCategory::class.java)
             }
             featurePlain.idFeatureCategory = categoryId
         }
@@ -94,7 +95,7 @@ class FeaturePlainService(
     fun deleteById(id: Int) {
         log.debug("Deleting feature plain with id: $id")
         if (!featurePlainRepository.existsById(id)) {
-            throw EntityNotFoundException(id)
+            throw EntityNotFoundWithClsException(id, FeaturePlain::class.java)
         }
         featurePlainRepository.deleteById(id)
         log.debug("Deleted feature plain with id: $id")

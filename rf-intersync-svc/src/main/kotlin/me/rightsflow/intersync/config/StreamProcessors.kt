@@ -1,7 +1,7 @@
 package me.rightsflow.intersync.config
 
 import me.rightsflow.intersync.dto.UserAvroMessage
-import me.rightsflow.intersync.service.UserReplicationService
+import me.rightsflow.intersync.service.ReplicationService
 import org.apache.avro.generic.GenericRecord
 import org.apache.avro.util.Utf8
 import org.slf4j.LoggerFactory
@@ -16,7 +16,7 @@ import java.util.function.Consumer
 
 @Configuration
 class StreamProcessors(
-    private val userReplicationService: UserReplicationService
+    private val replicationService: ReplicationService
 ) {
 
     private val log = LoggerFactory.getLogger(StreamProcessors::class.java)
@@ -45,7 +45,7 @@ class StreamProcessors(
                         false,false,0L,0L,0L,0L,"")
                     else -> throw IllegalArgumentException("Unsupported message type: ${message.payload.javaClass}")
                 }
-                userReplicationService.processUser(syncId, userDto)
+                replicationService.processUser(syncId, userDto)
                 acknowledgment?.acknowledge()
                 log.info("Successfully processed message with id: ${syncId}")
             }

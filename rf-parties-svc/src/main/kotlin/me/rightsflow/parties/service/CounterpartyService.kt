@@ -3,7 +3,7 @@ package me.rightsflow.parties.service
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import me.rightsflow.common.config.SecuritySubjectProvider
-import me.rightsflow.common.exception.EntityNotFoundException
+import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.parties.dto.request.CounterpartyCreateRequest
 import me.rightsflow.parties.dto.request.CounterpartyUpdateRequest
 import me.rightsflow.parties.dto.response.CounterpartyDto
@@ -22,7 +22,7 @@ class CounterpartyService(
     @PersistenceContext private val em: EntityManager
 ) {
     fun getById(id: Int): CounterpartyDto =
-        repo.findById(id).orElseThrow { EntityNotFoundException(id) }.toDto()
+        repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, Counterparty::class.java) }.toDto()
 
     fun findByFilter(filter: String?, pageable: Pageable): Page<CounterpartyDto> =
         repo.findByFilter(filter, pageable).map { it.toDto() }
@@ -44,7 +44,7 @@ class CounterpartyService(
 
     @Transactional
     fun update(id: Int, req: CounterpartyUpdateRequest): CounterpartyDto {
-        val e = repo.findById(id).orElseThrow { EntityNotFoundException(id) }
+        val e = repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, Counterparty::class.java) }
         // NOT NULL поля: если пришло null — НЕ меняем
         req.name?.let { e.name = it }
         // GUID nullable — меняем если прислали
@@ -58,7 +58,7 @@ class CounterpartyService(
 
     @Transactional
     fun delete(id: Int) {
-        if (!repo.existsById(id)) throw EntityNotFoundException(id)
+        if (!repo.existsById(id)) throw EntityNotFoundWithClsException(id, Counterparty::class.java)
         repo.deleteById(id)
     }
 

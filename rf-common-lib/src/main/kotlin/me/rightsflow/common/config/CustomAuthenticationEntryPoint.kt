@@ -1,4 +1,4 @@
-package me.rightsflow.catalog.config
+package me.rightsflow.common.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest

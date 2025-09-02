@@ -1,5 +1,6 @@
 package me.rightsflow.intersync.service
 
+import me.rightsflow.intersync.entity.KafkaBindingControl
 import me.rightsflow.intersync.repository.KafkaBindingControlRepository
 import org.slf4j.LoggerFactory
 import org.springframework.cloud.stream.binding.BindingService
@@ -24,15 +25,23 @@ class BindingControlService(
                     log.warn("Binding ${control.bindingName} not found")
                     continue
                 }
-                when (control.bindingState.name) {
-                    "PAUSE" -> if (!binding.isPaused) {
-                        binding.pause()
-                        log.debug("Binding ${control.bindingName} state updated to ${control.bindingState}")
+                when (control.bindingState) {
+                    KafkaBindingControl.BindingState.PAUSE -> {
+                        // если уже запущен и не на паузе — ставим на паузу
+                        if (binding.isRunning && !binding.isPaused) {
+                            binding.pause()
+                            log.info("Binding ${control.bindingName} paused")
+                        }
                     }
-
-                    "RESUME" -> if (binding.isPaused) {
-                        binding.resume()
-                        log.debug("Binding ${control.bindingName} state updated to ${control.bindingState}")
+                    KafkaBindingControl.BindingState.RESUME -> {
+                        // если не запущен — запускаем; если запущен, но на паузе — снимаем с паузы
+                        if (!binding.isRunning) {
+                            binding.start()
+                            log.info("Binding ${control.bindingName} started")
+                        } else if (binding.isPaused) {
+                            binding.resume()
+                            log.info("Binding ${control.bindingName} resumed")
+                        }
                     }
                 }
             }

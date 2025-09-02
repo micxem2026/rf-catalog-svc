@@ -6,7 +6,7 @@
 
     <!--Чтобы в идее было читабельно, надо включить профиль local. -->
     <!--Запись логов в файлы отключена, чтобы писало в файлы надо включить профиль filelog -->
-    <!--и указать в командной строке имя файла logging.file=anotherlog/mr2-server-core_first.log-->
+    <!--и указать в командной строке имя файла logging.file=anotherlog/rf-catalog-svc.log-->
 
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>

@@ -3,7 +3,7 @@ package me.rightsflow.oips.service
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import me.rightsflow.common.config.SecuritySubjectProvider
-import me.rightsflow.common.exception.EntityNotFoundException
+import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.common.util.DurationUtil
 import me.rightsflow.oips.dto.request.OipCreateRequest
 import me.rightsflow.oips.dto.request.OipUpdateRequest
@@ -23,7 +23,7 @@ class OipService(
     @PersistenceContext private val em: EntityManager
 ) {
     fun getById(id: Int): OipDto =
-        repo.findById(id).orElseThrow { EntityNotFoundException(id) }.toDto()
+        repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, Oip::class.java) }.toDto()
 
     fun findByFilter(
         idOipSuperType: Int?,
@@ -55,7 +55,7 @@ class OipService(
 
     @Transactional
     fun update(id: Int, req: OipUpdateRequest): OipDto {
-        val e = repo.findById(id).orElseThrow { EntityNotFoundException(id) }
+        val e = repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, Oip::class.java) }
         // NOT NULL поля: если пришло null — НЕ меняем
         req.idOipSuperType?.let { e.idOipSuperType = it }
         req.idOipType?.let { e.idOipType = it }
@@ -75,7 +75,7 @@ class OipService(
 
     @Transactional
     fun delete(id: Int) {
-        if (!repo.existsById(id)) throw EntityNotFoundException(id)
+        if (!repo.existsById(id)) throw EntityNotFoundWithClsException(id, Oip::class.java)
         repo.deleteById(id)
     }
 

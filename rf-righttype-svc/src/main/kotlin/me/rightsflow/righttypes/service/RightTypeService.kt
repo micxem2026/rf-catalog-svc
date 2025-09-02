@@ -3,7 +3,7 @@ package me.rightsflow.righttypes.service
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import me.rightsflow.common.config.SecuritySubjectProvider
-import me.rightsflow.common.exception.EntityNotFoundException
+import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.righttypes.dto.request.RightTypeCreateRequest
 import me.rightsflow.righttypes.dto.request.RightTypeUpdateRequest
 import me.rightsflow.righttypes.dto.response.RightTypePlainItem
@@ -24,7 +24,7 @@ class RightTypeService(
     private lateinit var em: EntityManager
 
     fun getById(id: Int): RightTypeResponse =
-        repo.findById(id).orElseThrow { EntityNotFoundException(id) }.toDto()
+        repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, RightType::class.java) }.toDto()
 
     fun getTree(treeMode: String): Any =
         when (treeMode.lowercase()) {
@@ -56,7 +56,7 @@ class RightTypeService(
 
     @Transactional
     fun delete(id: Int) {
-        if (!repo.existsById(id)) throw EntityNotFoundException(id)
+        if (!repo.existsById(id)) throw EntityNotFoundWithClsException(id, RightType::class.java)
         repo.deleteById(id) // FK конфликты поймаем handler-ом → 409
     }
 

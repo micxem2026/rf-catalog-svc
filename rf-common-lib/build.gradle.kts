@@ -2,6 +2,11 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+plugins {
+    `java-library`       // нужен компонент components["java"]
+    `maven-publish`      // даёт publishing { ... }
+}
+
 kotlin {
     jvmToolchain(17)
 }
@@ -12,9 +17,64 @@ repositories {
     }
 }
 
+version = "1.0.2"
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+
+            // Этот блок будет выполнен после полной конфигурации проекта
+            project.afterEvaluate {
+                groupId = project.group.toString()
+                artifactId = project.name
+                version = project.version.toString()
+            }
+
+            pom {
+                name.set(project.name)
+                description.set(project.description)
+
+                developers {
+                    developer {
+                        id.set("micxem")
+                        name.set("MicXEm")
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitLab"
+            url = uri(project.findProperty("gitlab.registry.url") ?: "")
+
+            credentials(HttpHeaderCredentials::class) {
+                name = "Private-Token"
+                value = project.findProperty("gitlab.registry.token")?.toString() ?: ""
+            }
+            authentication {
+                create<HttpHeaderAuthentication>("header")
+            }
+            isAllowInsecureProtocol = project.findProperty("gitlab.allow.insecure") == "true"
+        }
+    }
+}
+
 dependencies {
 
     // Spring Boot
+    implementation("org.springframework.boot:spring-boot-starter-web:${property("springBootVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:${property("springBootVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:${property("springBootVersion")}")
 

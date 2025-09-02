@@ -1,4 +1,4 @@
-package me.rightsflow.catalog.config
+package me.rightsflow.common.config
 
 import org.springframework.core.convert.converter.Converter
 import org.springframework.stereotype.Component

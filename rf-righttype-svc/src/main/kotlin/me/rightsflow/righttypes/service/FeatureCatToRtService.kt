@@ -3,7 +3,7 @@ package me.rightsflow.righttypes.service
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import me.rightsflow.common.config.SecuritySubjectProvider
-import me.rightsflow.common.exception.EntityNotFoundException
+import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.righttypes.dto.request.FeatureCatToRtCreateRequest
 import me.rightsflow.righttypes.dto.request.FeatureCatToRtUpdateRequest
 import me.rightsflow.righttypes.dto.response.FeatureCatToRtResponse
@@ -24,7 +24,7 @@ class FeatureCatToRtService(
     private val log = LoggerFactory.getLogger(FeatureCatToRtService::class.java)
 
     fun getById(id: Int): FeatureCatToRtResponse =
-        repo.findById(id).orElseThrow { EntityNotFoundException(id) }.toDto()
+        repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, FeatureCatToRt::class.java) }.toDto()
 
     fun listByRightType(rightTypeId: Int): List<FeatureCatToRtResponse> =
         repo.findAllByRightTypeId(rightTypeId).map { it.toDto() }
@@ -47,7 +47,7 @@ class FeatureCatToRtService(
 
     @Transactional
     fun update(id: Int, req: FeatureCatToRtUpdateRequest): FeatureCatToRtResponse {
-        val e = repo.findById(id).orElseThrow { EntityNotFoundException(id) }
+        val e = repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, FeatureCatToRt::class.java) }
 
         req.rightTypeId?.let { e.rightTypeId = it } // non-nullable, null -> не меняем
         req.featureCategoryId?.let { e.featureCategoryId = it }
@@ -61,7 +61,7 @@ class FeatureCatToRtService(
 
     @Transactional
     fun delete(id: Int) {
-        if (!repo.existsById(id)) throw EntityNotFoundException(id)
+        if (!repo.existsById(id)) throw EntityNotFoundWithClsException(id, FeatureCatToRt::class.java)
         repo.deleteById(id) // FK/unique ошибки -> handler (409)
     }
 

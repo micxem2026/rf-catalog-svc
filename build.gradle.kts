@@ -1,5 +1,5 @@
 plugins {
-    id("org.springframework.boot") version "3.5.3" apply false
+    id("org.springframework.boot") version "3.5.4" apply false
     id("io.spring.dependency-management") version "1.1.7" apply false
     kotlin("jvm") version "2.1.21" apply false
     kotlin("plugin.spring") version "2.1.21" apply false
@@ -24,6 +24,6 @@ subprojects {
     version = "0.0.1-SNAPSHOT"
 
     extra["springCloudVersion"] = "2025.0.0"
-    extra["springBootVersion"] = "3.5.3"
+    extra["springBootVersion"] = "3.5.4"
 
 }

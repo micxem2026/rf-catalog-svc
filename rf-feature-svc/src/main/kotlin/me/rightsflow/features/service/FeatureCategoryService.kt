@@ -4,7 +4,7 @@ import me.rightsflow.features.dto.request.CreateFeatureCategoryRequest
 import me.rightsflow.features.dto.request.UpdateFeatureCategoryRequest
 import me.rightsflow.features.dto.response.FeatureCategoryResponse
 import me.rightsflow.features.entity.FeatureCategory
-import me.rightsflow.common.exception.EntityNotFoundException
+import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.features.repository.FeatureCategoryRepository
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -25,7 +25,7 @@ class FeatureCategoryService(
     fun findById(id: Int): FeatureCategoryResponse {
         log.debug("Finding feature category by id: $id")
         val category = featureCategoryRepository.findById(id)
-            .orElseThrow { EntityNotFoundException(id) }
+            .orElseThrow { EntityNotFoundWithClsException(id, FeatureCategory::class.java) }
         return mapToResponse(category)
     }
 
@@ -51,7 +51,7 @@ class FeatureCategoryService(
     fun update(id: Int, request: UpdateFeatureCategoryRequest, userId: String): FeatureCategoryResponse {
         log.debug("Updating feature category with id: $id by user: $userId")
         val category = featureCategoryRepository.findById(id)
-            .orElseThrow { EntityNotFoundException(id) }
+            .orElseThrow { EntityNotFoundWithClsException(id, FeatureCategory::class.java) }
 
         request.name?.let {
             if (it.isNotBlank()) {
@@ -69,7 +69,7 @@ class FeatureCategoryService(
     fun deleteById(id: Int) {
         log.debug("Deleting feature category with id: $id")
         if (!featureCategoryRepository.existsById(id)) {
-            throw EntityNotFoundException(id)
+            throw EntityNotFoundWithClsException(id, FeatureCategory::class.java)
         }
         featureCategoryRepository.deleteById(id)
         log.debug("Deleted feature category with id: $id")

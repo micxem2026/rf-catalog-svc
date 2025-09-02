@@ -1,23 +1,15 @@
 package me.rightsflow.intersync.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.SequenceGenerator
-import jakarta.persistence.Table
-import java.time.LocalDateTime
+import jakarta.persistence.*
+import java.time.OffsetDateTime
 
 @Entity
 @Table(name = "kafka_bindings_control")
 data class KafkaBindingControl(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bindings_control_seq")
-    @SequenceGenerator(name = "bindings_control_seq", sequenceName = "kafka_bindings_control_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     val id: Int,
 
     @Column(name = "binding_name", nullable = false, length = 255)
@@ -28,10 +20,10 @@ data class KafkaBindingControl(
     val bindingState: BindingState,
 
     @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: OffsetDateTime = OffsetDateTime.now(),
 
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime? = null
+    var updatedAt: OffsetDateTime? = null
 
 ) {
     enum class BindingState {

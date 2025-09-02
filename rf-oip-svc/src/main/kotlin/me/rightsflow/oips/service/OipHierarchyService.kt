@@ -3,7 +3,7 @@ package me.rightsflow.oips.service
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import me.rightsflow.common.config.SecuritySubjectProvider
-import me.rightsflow.common.exception.EntityNotFoundException
+import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.oips.dto.request.OipHierarchyCreateRequest
 import me.rightsflow.oips.dto.response.OipHierarchyDto
 import me.rightsflow.oips.entity.OipHierarchy
@@ -23,7 +23,7 @@ class OipHierarchyService(
     private lateinit var em: EntityManager
 
     fun getById(id: Int): OipHierarchyDto =
-        repo.findById(id).orElseThrow { EntityNotFoundException(id) }.toDto()
+        repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, OipHierarchy::class.java) }.toDto()
 
     fun findChildrenByParent(parentId: Int, pageable: Pageable): Page<OipHierarchyDto> =
         repo.findChildrenSortedByPartNum(parentId, pageable).map { it.toDto() }
@@ -43,7 +43,7 @@ class OipHierarchyService(
 
     @Transactional
     fun delete(id: Int) {
-        if (!repo.existsById(id)) throw EntityNotFoundException(id)
+        if (!repo.existsById(id)) throw EntityNotFoundWithClsException(id, OipHierarchy::class.java)
         repo.deleteById(id) // FK конфликты поймаем handler-ом → 409
     }
 
