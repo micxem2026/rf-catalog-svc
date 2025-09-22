@@ -4,11 +4,7 @@ import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
-import io.swagger.v3.oas.models.security.OAuthFlow
-import io.swagger.v3.oas.models.security.OAuthFlows
-import io.swagger.v3.oas.models.security.Scopes
-import io.swagger.v3.oas.models.security.SecurityRequirement
-import io.swagger.v3.oas.models.security.SecurityScheme
+import io.swagger.v3.oas.models.security.*
 import io.swagger.v3.oas.models.servers.Server
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -54,19 +50,19 @@ class OpenApiConfig {
                             .description("OAuth2 authentication")
                             .flows(
                                 OAuthFlows()
-/*                                    .authorizationCode(
-                                        OAuthFlow()
-                                            .authorizationUrl("http://$authHostname:9000/auth/oauth2/authorize")
-                                            .tokenUrl("http://$authHostname:9000/auth/oauth2/token")
-                                            .refreshUrl("http://$authHostname:9000/auth/oauth2/token")
-                                            .scopes(
-                                                Scopes()
-                                                    .addString("create", "Создание записей")
-                                                    .addString("update", "Изменение записей")
-                                                    .addString("delete", "Удаление записей")
-                                                    .addString("read", "Чтение записей")
-                                            )
-                                    )*/
+                                    /*                                    .authorizationCode(
+                                                                            OAuthFlow()
+                                                                                .authorizationUrl("http://$authHostname:9000/auth/oauth2/authorize")
+                                                                                .tokenUrl("http://$authHostname:9000/auth/oauth2/token")
+                                                                                .refreshUrl("http://$authHostname:9000/auth/oauth2/token")
+                                                                                .scopes(
+                                                                                    Scopes()
+                                                                                        .addString("create", "Создание записей")
+                                                                                        .addString("update", "Изменение записей")
+                                                                                        .addString("delete", "Удаление записей")
+                                                                                        .addString("read", "Чтение записей")
+                                                                                )
+                                                                        )*/
                                     .clientCredentials(
                                         OAuthFlow()
                                             .tokenUrl("http://$catalogHost/auth/oauth2/token")
@@ -97,7 +93,10 @@ class OpenApiConfig {
             // Глобальные требования безопасности
             .security(
                 listOf(
-                    SecurityRequirement().addList("oauth2", listOf("read", "create", "update", "delete", "execute", "admin", "user", "manager")),
+                    SecurityRequirement().addList(
+                        "oauth2",
+                        listOf("read", "create", "update", "delete", "execute", "admin", "user", "manager")
+                    ),
                     SecurityRequirement().addList("bearerAuth")
                 )
             )

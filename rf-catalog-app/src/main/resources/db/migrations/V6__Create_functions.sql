@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION rightsflow.ins_klf_right_type(
     p_id_parent integer,
     p_name character varying,
+    p_description character varying,
     p_created_by character varying)
     RETURNS integer
     LANGUAGE 'plpgsql'
@@ -15,8 +16,8 @@ BEGIN
         select id into r_result from klf_right_type
         where id_parent is null and lower(name) = lower(p_name);
         if r_result is null then
-            insert into klf_right_type(id_parent, name, created_by)
-            values (p_id_parent, p_name, p_created_by)
+            insert into klf_right_type(id_parent, name, description, created_by)
+            values (p_id_parent, p_name, p_description, p_created_by)
             returning id into r_result;
         end if;
         return r_result;
@@ -25,8 +26,8 @@ BEGIN
     select id into r_result from klf_right_type
     where id_parent = p_id_parent and lower(name) = lower(p_name);
     if r_result is null then
-        insert into klf_right_type (id_parent, name, created_by)
-        values (p_id_parent, p_name, p_created_by)
+        insert into klf_right_type (id_parent, name, description, created_by)
+        values (p_id_parent, p_name, p_description, p_created_by)
         returning id into r_result;
     end if;
     return r_result;
@@ -38,6 +39,7 @@ CREATE OR REPLACE FUNCTION rightsflow.upd_klf_right_type(
     p_id integer,
     p_id_parent integer,
     p_name character varying,
+    p_description character varying,
     p_updated_by character varying)
     RETURNS integer
     LANGUAGE 'plpgsql'
@@ -53,8 +55,8 @@ BEGIN
     select * into v_old from klf_right_type
     where id = p_id;
 
-    select p_id_parent, case when p_name is null then v_old.name else p_name end, p_updated_by
-    into v_new.id_parent, v_new.name, v_new.updated_by;
+    select p_id_parent, case when p_name is null then v_old.name else p_name end, p_updated_by, p_description
+    into v_new.id_parent, v_new.name, v_new.updated_by, v_new.description;
 
     if v_new.id_parent is null then
         select count(*) into v_cnt from klf_right_type
@@ -63,6 +65,7 @@ BEGIN
             update klf_right_type
             set id_parent = null,
                 name = v_new.name,
+                description = v_new.description,
                 updated_by = v_new.updated_by,
                 updated_at = CURRENT_TIMESTAMP
             where id = p_id;
@@ -79,6 +82,7 @@ BEGIN
         update klf_right_type
         set id_parent = v_new.id_parent,
             name = v_new.name,
+            description = v_new.description,
             updated_by = v_new.updated_by,
             updated_at = CURRENT_TIMESTAMP
         where id = p_id;

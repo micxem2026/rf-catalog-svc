@@ -28,11 +28,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/features/categories")
 @Tag(name = "Feature Categories", description = "API для работы с категориями характеристик")
-@SecurityRequirement(name = "bearerAuth")
-@SecurityRequirement(
-    name = "oauth2",
-    scopes = ["read", "create", "update", "delete", "execute", "admin", "user", "manager"]
-)
 class FeatureCategoryController(
     private val featureCategoryService: FeatureCategoryService
 ) {

@@ -7,11 +7,11 @@ import jakarta.validation.constraints.Size
 @Schema(description = "Запрос на создание организации")
 data class OrganizationCreateRequest(
 
-    @Schema(description = "GUID", example = "014-12345678")
-    @Size(max = 255)
+    @field:Schema(description = "GUID", example = "014-12345678")
+    @field:Size(max = 255)
     val guid: String?,
 
-    @Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
+    @field:Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
     @field:NotBlank @field:Size(max = 255)
     val name: String
 
@@ -20,11 +20,11 @@ data class OrganizationCreateRequest(
 @Schema(description = "Запрос на изменение организации")
 data class OrganizationUpdateRequest(
 
-    @Schema(description = "GUID", example = "014-12345678")
-    @Size(max = 255)
+    @field:Schema(description = "GUID", example = "014-12345678")
+    @field:Size(max = 255)
     val guid: String?,
 
-    @Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
+    @field:Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
     @field:Size(max = 255)
     val name: String?
 

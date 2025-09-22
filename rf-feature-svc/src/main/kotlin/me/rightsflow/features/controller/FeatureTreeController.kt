@@ -23,11 +23,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/features/trees")
 @Tag(name = "Feature Trees", description = "API для работы с деревом характеристик")
-@SecurityRequirement(name = "bearerAuth")
-@SecurityRequirement(
-    name = "oauth2",
-    scopes = ["read", "create", "update", "delete", "execute", "admin", "user", "manager"]
-)
 class FeatureTreeController(
     private val featureTreeService: FeatureTreeService
 ) {

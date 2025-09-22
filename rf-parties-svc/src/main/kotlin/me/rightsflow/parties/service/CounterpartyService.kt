@@ -66,6 +66,8 @@ class CounterpartyService(
         id = this.id!!,
         guid = this.guid,
         name = this.name,
+        idOrgRef = this.idOrgRef,
+        nameOrgRef = this.organization?.name,
         createdBy = this.createdBy,
         createdAt = this.createdAt,
         updatedBy = this.updatedBy,

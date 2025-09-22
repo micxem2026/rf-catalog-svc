@@ -22,7 +22,14 @@ class Counterparty(
     @Column(name = "NAME", nullable = false, length = 255)
     var name: String,
 
+    @Column(name = "ID_ORG_REF", nullable = true)
+    var idOrgRef: Int? = null
+
     ) : BaseAudit() {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_ORG_REF", referencedColumnName = "ID", insertable = false, updatable = false)
+    var organization: Organization? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

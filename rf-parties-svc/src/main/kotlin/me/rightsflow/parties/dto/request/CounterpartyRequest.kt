@@ -7,25 +7,31 @@ import jakarta.validation.constraints.Size
 @Schema(description = "Запрос на создание контрагента")
 data class CounterpartyCreateRequest(
 
-    @Schema(description = "GUID", example = "014-12345678")
-    @Size(max = 255)
+    @field:Schema(description = "GUID", example = "014-12345678")
+    @field:Size(max = 255)
     val guid: String?,
 
-    @Schema(description = "Название контрагента", example = "ООО \"Рога и копыта\"")
+    @field:Schema(description = "Название контрагента", example = "ООО \"Рога и копыта\"")
     @field:NotBlank @field:Size(max = 255)
-    val name: String
+    val name: String,
+
+    @field:Schema(description = "Идентификатор организации связанной с контрагентом", example = "1")
+    val idOrgRef: Int?
 
 )
 
 @Schema(description = "Запрос на изменение контрагента")
 data class CounterpartyUpdateRequest(
 
-    @Schema(description = "GUID", example = "014-12345678")
-    @Size(max = 255)
+    @field:Schema(description = "GUID", example = "014-12345678")
+    @field:Size(max = 255)
     val guid: String?,
 
-    @Schema(description = "Название контрагента", example = "ООО \"Рога и копыта\"")
+    @field:Schema(description = "Название контрагента", example = "ООО \"Рога и копыта\"")
     @field:Size(max = 255)
-    val name: String?
+    val name: String?,
+
+    @field:Schema(description = "Идентификатор организации связанной с контрагентом", example = "1")
+    val idOrgRef: Int?
 
 )

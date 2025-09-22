@@ -6,55 +6,61 @@ import java.time.OffsetDateTime
 @Schema(description = "Узел дерева типов прав (recursive)")
 data class RightTypeTreeNode(
 
-    @Schema(description = "ID типа права", example = "1")
+    @field:Schema(description = "ID типа права", example = "1")
     val id: Int,
 
-    @Schema(description = "ID родителя типа права", example = "null")
+    @field:Schema(description = "ID родителя типа права", example = "null")
     val parentId: Int?,
 
-    @Schema(description = "Название типа права", example = "SVOD")
+    @field:Schema(description = "Название типа права", example = "FVOD")
     val name: String,
 
-    @Schema(description = "Пользователь, создавший запись", example = "admin")
+    @field:Schema(description = "Описание типа права", example = "Бесплатное видео по запросу")
+    val description: String?,
+
+    @field:Schema(description = "Пользователь, создавший запись", example = "admin")
     val createdBy: String,
 
-    @Schema(description = "Дата и время создания записи")
+    @field:Schema(description = "Дата и время создания записи")
     val createdAt: OffsetDateTime,
 
-    @Schema(description = "Пользователь, последний изменивший запись", example = "admin")
+    @field:Schema(description = "Пользователь, последний изменивший запись", example = "admin")
     val updatedBy: String?,
 
-    @Schema(description = "Дата и время последнего изменения записи")
+    @field:Schema(description = "Дата и время последнего изменения записи")
     val updatedAt: OffsetDateTime?,
 
-    @Schema(description = "Список дочерних элементов")
+    @field:Schema(description = "Список дочерних элементов")
     val children: List<RightTypeTreeNode>
 )
 
 @Schema(description = "Элемент плоского дерева типов прав (plain)")
 data class RightTypePlainItem(
 
-    @Schema(description = "ID типа права", example = "1")
+    @field:Schema(description = "ID типа права", example = "1")
     val id: Int,
 
-    @Schema(description = "ID родителя типа права", example = "null")
+    @field:Schema(description = "ID родителя типа права", example = "null")
     val parentId: Int?,
 
-    @Schema(description = "Название типа права", example = "SVOD")
+    @field:Schema(description = "Название типа права", example = "FVOD")
     val name: String,
 
-    @Schema(description = "Пользователь, создавший запись", example = "admin")
+    @field:Schema(description = "Описание типа права", example = "Бесплатное видео по запросу")
+    val description: String?,
+
+    @field:Schema(description = "Пользователь, создавший запись", example = "admin")
     val createdBy: String,
 
-    @Schema(description = "Дата и время создания записи")
+    @field:Schema(description = "Дата и время создания записи")
     val createdAt: OffsetDateTime,
 
-    @Schema(description = "Пользователь, последний изменивший запись", example = "admin")
+    @field:Schema(description = "Пользователь, последний изменивший запись", example = "admin")
     val updatedBy: String?,
 
-    @Schema(description = "Дата и время последнего изменения записи")
+    @field:Schema(description = "Дата и время последнего изменения записи")
     val updatedAt: OffsetDateTime?,
 
-    @Schema(description = "Уровень вложенности (начинается с 1)", example = "1")
+    @field:Schema(description = "Уровень вложенности (начинается с 1)", example = "1")
     val level: Int
 )

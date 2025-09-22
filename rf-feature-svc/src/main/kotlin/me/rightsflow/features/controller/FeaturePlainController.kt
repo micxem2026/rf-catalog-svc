@@ -28,8 +28,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/features/plains")
 @Tag(name = "Feature Plains", description = "API для работы с простыми характеристиками")
-@SecurityRequirement(name = "bearerAuth")
-@SecurityRequirement(name = "oauth2", scopes = ["read", "create", "update", "delete", "execute", "admin", "user", "manager"])
 class FeaturePlainController(
     private val featurePlainService: FeaturePlainService
 ) {
