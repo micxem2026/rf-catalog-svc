@@ -74,6 +74,7 @@ object MessageConverter {
     }
 
     private fun GenericRecord.getStringOrNull(fieldName: String): String? {
+        this.schema.getField(fieldName) ?: return null // Поле отсутствует в схеме
         return when (val value = this.get(fieldName)) {
             is Utf8 -> value.toString()
             is String -> value

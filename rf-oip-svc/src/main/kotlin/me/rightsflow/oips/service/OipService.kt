@@ -42,7 +42,8 @@ class OipService(
             name = requireNotNull(req.name) { "name is required" },
             partNum = req.partNum,
             partCount = req.partCount,
-            duration = DurationUtil.fromStringHHmmss(req.duration)
+            duration = DurationUtil.fromStringHHmmss(req.duration),
+            description = req.description
         ).apply {
             createdBy = subProvider.currentSub()
             createdAt = OffsetDateTime.now()
@@ -66,6 +67,8 @@ class OipService(
         if (req.guid != null) e.guid = req.guid
         // DURATION nullable — записываем что пришло (включая null)
         e.duration = DurationUtil.fromStringHHmmss(req.duration)
+        // DESCRIPTION nullable — записываем что пришло (включая null)
+        e.description = req.description
         e.updatedBy = subProvider.currentSub()
         e.updatedAt = OffsetDateTime.now()
         repo.saveAndFlush(e)
@@ -90,6 +93,7 @@ class OipService(
         duration = DurationUtil.toStringHHmmss(this.duration),
         oipSuperTypeName = this.oipSuperType?.name ?: "",
         oipTypeName = this.oipType?.name ?: "",
+        description = this.description,
         createdBy = this.createdBy,
         createdAt = this.createdAt,
         updatedBy = this.updatedBy,
