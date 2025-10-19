@@ -2,7 +2,9 @@ package me.rightsflow.oips.service
 
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
+import me.rightsflow.clients.feign.ContractConstraintClient
 import me.rightsflow.common.config.SecuritySubjectProvider
+import me.rightsflow.common.exception.ConstraintException
 import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.common.util.DurationUtil
 import me.rightsflow.oips.dto.request.OipCreateRequest
@@ -20,6 +22,7 @@ import java.time.OffsetDateTime
 class OipService(
     private val repo: OipRepository,
     private val subProvider: SecuritySubjectProvider,
+    private val contractConstraintClient: ContractConstraintClient,
     @PersistenceContext private val em: EntityManager
 ) {
     fun getById(id: Int): OipDto =
@@ -79,7 +82,11 @@ class OipService(
     @Transactional
     fun delete(id: Int) {
         if (!repo.existsById(id)) throw EntityNotFoundWithClsException(id, Oip::class.java)
-        repo.deleteById(id)
+        if (!contractConstraintClient.checkOipConstraint(id)) {
+            repo.deleteById(id)
+        } else {
+            throw ConstraintException(id, Oip::class.java)
+        }
     }
 
     private fun Oip.toDto() = OipDto(

@@ -46,6 +46,19 @@ class GlobalExceptionHandler(
         )
     }
 
+    @ExceptionHandler(ConstraintException::class)
+    fun handleConstraintException(
+        ex: ConstraintException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        log.error("Constraint violation detected: ${ex.message}")
+        return createErrorResponse(
+            request = request,
+            status = HttpStatus.CONFLICT,
+            message = ex.message ?: "Constraint violation detected"
+        )
+    }
+
     @ExceptionHandler(DataIntegrityViolationException::class)
     fun handleDataIntegrityViolationException(
         ex: DataIntegrityViolationException,

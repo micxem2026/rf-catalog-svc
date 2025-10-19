@@ -6,11 +6,11 @@ import jakarta.validation.constraints.NotNull
 @Schema(description = "Создание отношения parent/child для ОИС")
 data class OipHierarchyCreateRequest(
 
-    @Schema(description = "ID родительского ОИС")
+    @field:Schema(description = "ID родительского ОИС")
     @field:NotNull
     val idParent: Int,
 
-    @Schema(description = "ID ОИС")
+    @field:Schema(description = "ID ОИС")
     @field:NotNull
     val idOip: Int
 )

@@ -8,13 +8,13 @@ import jakarta.validation.constraints.Size
 data class CreateFeatureCategoryRequest(
     @field:NotBlank(message = "Название категории не может быть пустым")
     @field:Size(max = 50, message = "Название категории не может превышать 50 символов")
-    @Schema(description = "Название категории", example = "Язык")
+    @field:Schema(description = "Название категории", example = "Язык")
     val name: String
 )
 
 @Schema(description = "Запрос на обновление категории характеристик")
 data class UpdateFeatureCategoryRequest(
     @field:Size(max = 50, message = "Название категории не может превышать 50 символов")
-    @Schema(description = "Название категории", example = "Язык")
+    @field:Schema(description = "Название категории", example = "Язык")
     val name: String?
 )

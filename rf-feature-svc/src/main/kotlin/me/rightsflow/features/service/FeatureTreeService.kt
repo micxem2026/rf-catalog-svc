@@ -1,5 +1,7 @@
 package me.rightsflow.features.service
 
+import me.rightsflow.clients.feign.ContractConstraintClient
+import me.rightsflow.common.exception.ConstraintException
 import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.features.dto.request.CreateFeatureTreeRequest
 import me.rightsflow.features.dto.request.UpdateFeatureTreeRequest
@@ -16,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class FeatureTreeService(
     private val featureTreeRepository: FeatureTreeRepository,
-    private val featurePlainRepository: FeaturePlainRepository
+    private val featurePlainRepository: FeaturePlainRepository,
+    private val contractConstraintClient: ContractConstraintClient
 ) {
 
     private val log = LoggerFactory.getLogger(FeatureTreeService::class.java)
@@ -121,8 +124,12 @@ class FeatureTreeService(
         if (!featureTreeRepository.existsById(id)) {
             throw EntityNotFoundWithClsException(id, FeatureTree::class.java)
         }
-        featureTreeRepository.deleteById(id)
-        log.debug("Deleted feature tree with id: $id")
+        if (!contractConstraintClient.checkFeatureConstraint(id)) {
+            featureTreeRepository.deleteById(id)
+            log.debug("Deleted feature tree with id: $id")
+        } else {
+            throw ConstraintException(id, FeatureTree::class.java)
+        }
     }
 
     private fun buildRecursiveTree(node: FeatureTreeRecursiveProjection): FeatureTreeRecursiveProjection {

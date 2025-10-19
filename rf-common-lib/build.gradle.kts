@@ -17,7 +17,7 @@ repositories {
     }
 }
 
-version = "1.0.2"
+version = "1.0.3"
 
 publishing {
     publications {
@@ -75,6 +75,9 @@ dependencies {
 
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web:${property("springBootVersion")}")
+    implementation("ch.qos.logback:logback-classic:1.5.19") {
+        because("CVE-2025-11226 - Security fix")
+    }
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:${property("springBootVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:${property("springBootVersion")}")
 
@@ -84,10 +87,8 @@ dependencies {
     implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.10.3")
 
     // Swagger/OpenAPI
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
-    implementation("org.apache.commons:commons-lang3:3.18.0") {
-        because("CVE-2025-48924 - Security fix")
-    }
+    implementation(platform("org.springdoc:springdoc-openapi-bom:${property("springDocVersion")}"))
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
 
 }
 

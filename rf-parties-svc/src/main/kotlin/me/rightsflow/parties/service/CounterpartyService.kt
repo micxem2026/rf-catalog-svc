@@ -2,7 +2,9 @@ package me.rightsflow.parties.service
 
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
+import me.rightsflow.clients.feign.ContractConstraintClient
 import me.rightsflow.common.config.SecuritySubjectProvider
+import me.rightsflow.common.exception.ConstraintException
 import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.parties.dto.request.CounterpartyCreateRequest
 import me.rightsflow.parties.dto.request.CounterpartyUpdateRequest
@@ -19,6 +21,7 @@ import java.time.OffsetDateTime
 class CounterpartyService(
     private val repo: CounterpartyRepository,
     private val sub: SecuritySubjectProvider,
+    private val constraintClient: ContractConstraintClient,
     @PersistenceContext private val em: EntityManager
 ) {
     fun getById(id: Int): CounterpartyDto =
@@ -59,7 +62,11 @@ class CounterpartyService(
     @Transactional
     fun delete(id: Int) {
         if (!repo.existsById(id)) throw EntityNotFoundWithClsException(id, Counterparty::class.java)
-        repo.deleteById(id)
+        if (!constraintClient.checkCounterpartyConstraint(id)) {
+            repo.deleteById(id)
+        } else {
+            throw ConstraintException(id, Counterparty::class.java)
+        }
     }
 
     private fun Counterparty.toDto() = CounterpartyDto(

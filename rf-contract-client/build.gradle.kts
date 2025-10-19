@@ -1,33 +1,25 @@
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 
 kotlin {
     jvmToolchain(17)
 }
 
-repositories {
-    maven {
-        url = uri("https://packages.confluent.io/maven/")
-    }
-}
-
 dependencies {
 
-    // Spring Boot
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:${property("springBootVersion")}")
+    implementation("org.springframework.boot:spring-boot-starter-web:${property("springBootVersion")}")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:${property("springBootVersion")}")
     implementation("ch.qos.logback:logback-classic:1.5.19") {
-        because("CVE-2025-11226 - Security fix")
+            because("CVE-2025-11226 - Security fix")
     }
 
-    // Spring Cloud
-    implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
-    implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
-
-    implementation("io.confluent:kafka-avro-serializer:8.0.0")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.3.0")
     implementation("org.apache.commons:commons-lang3:3.18.0") {
         because("CVE-2025-48924 - Security fix")
     }
+    implementation("org.springframework.cloud:spring-cloud-circuitbreaker-resilience4j:3.3.0")
+
 }
 
 dependencyManagement {
@@ -42,3 +34,5 @@ tasks.withType<KotlinCompile> {
         jvmTarget.set(JvmTarget.JVM_17)
     }
 }
+
+

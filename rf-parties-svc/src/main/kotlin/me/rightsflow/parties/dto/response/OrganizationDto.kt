@@ -5,19 +5,19 @@ import java.time.OffsetDateTime
 
 @Schema(description = "Организация")
 data class OrganizationDto(
-    @Schema(description = "ID", example = "1")
+    @field:Schema(description = "ID", example = "1")
     val id: Int,
-    @Schema(description = "GUID", example = "013-123456789")
+    @field:Schema(description = "GUID", example = "013-123456789")
     val guid: String?,
-    @Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
+    @field:Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
     val name: String,
     // audit
-    @Schema(description = "Пользователь, создавший запись", example = "admin")
+    @field:Schema(description = "Пользователь, создавший запись", example = "admin")
     val createdBy: String,
-    @Schema(description = "Дата и время создания записи", example = "2022-01-01T00:00:00Z")
+    @field:Schema(description = "Дата и время создания записи", example = "2022-01-01T00:00:00Z")
     val createdAt: OffsetDateTime,
-    @Schema(description = "Пользователь, обновивший запись", example = "admin")
+    @field:Schema(description = "Пользователь, обновивший запись", example = "admin")
     val updatedBy: String?,
-    @Schema(description = "Дата и время обновления записи", example = "2022-01-01T00:00:00Z")
+    @field:Schema(description = "Дата и время обновления записи", example = "2022-01-01T00:00:00Z")
     val updatedAt: OffsetDateTime?
 )

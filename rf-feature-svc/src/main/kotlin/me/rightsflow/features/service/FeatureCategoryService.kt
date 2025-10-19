@@ -1,5 +1,7 @@
 package me.rightsflow.features.service
 
+import me.rightsflow.clients.feign.ContractConstraintClient
+import me.rightsflow.common.exception.ConstraintException
 import me.rightsflow.features.dto.request.CreateFeatureCategoryRequest
 import me.rightsflow.features.dto.request.UpdateFeatureCategoryRequest
 import me.rightsflow.features.dto.response.FeatureCategoryResponse
@@ -16,7 +18,8 @@ import java.time.OffsetDateTime
 @Service
 @Transactional
 class FeatureCategoryService(
-    private val featureCategoryRepository: FeatureCategoryRepository
+    private val featureCategoryRepository: FeatureCategoryRepository,
+    private val contractConstraintClient: ContractConstraintClient
 ) {
 
     private val log = LoggerFactory.getLogger(FeatureCategoryService::class.java)
@@ -71,8 +74,12 @@ class FeatureCategoryService(
         if (!featureCategoryRepository.existsById(id)) {
             throw EntityNotFoundWithClsException(id, FeatureCategory::class.java)
         }
-        featureCategoryRepository.deleteById(id)
-        log.debug("Deleted feature category with id: $id")
+        if (!contractConstraintClient.checkFeatureCategoryConstraint(id)) {
+            featureCategoryRepository.deleteById(id)
+            log.debug("Deleted feature category with id: $id")
+        } else {
+            throw ConstraintException(id, FeatureCategory::class.java)
+        }
     }
 
     private fun mapToResponse(category: FeatureCategory): FeatureCategoryResponse {

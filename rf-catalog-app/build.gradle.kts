@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":rf-righttype-svc"))
     implementation(project(":rf-oip-svc"))
     implementation(project(":rf-parties-svc"))
+    implementation(project(":rf-contract-client"))
 
     // Spring Boot starters
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -37,6 +38,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
     implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
     implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation("org.springframework.cloud:spring-cloud-circuitbreaker-resilience4j")
     //implementation("org.springframework.kafka:spring-kafka")
 
     // Database
@@ -50,10 +53,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // Swagger/OpenAPI
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
-    implementation("org.apache.commons:commons-lang3:3.18.0") {
-        because("CVE-2025-48924 - Security fix")
-    }
+    implementation(platform("org.springdoc:springdoc-openapi-bom:${property("springDocVersion")}"))
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
 
     // Avro
     //implementation("org.apache.avro:avro:1.11.4")

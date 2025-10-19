@@ -2,7 +2,9 @@ package me.rightsflow.righttypes.service
 
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
+import me.rightsflow.clients.feign.ContractConstraintClient
 import me.rightsflow.common.config.SecuritySubjectProvider
+import me.rightsflow.common.exception.ConstraintException
 import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.righttypes.dto.request.RightTypeCreateRequest
 import me.rightsflow.righttypes.dto.request.RightTypeUpdateRequest
@@ -17,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class RightTypeService(
     private val repo: RightTypeRepository,
-    private val sub: SecuritySubjectProvider
+    private val sub: SecuritySubjectProvider,
+    private val constraintClient: ContractConstraintClient,
 ) {
 
     @PersistenceContext
@@ -59,7 +62,11 @@ class RightTypeService(
     @Transactional
     fun delete(id: Int) {
         if (!repo.existsById(id)) throw EntityNotFoundWithClsException(id, RightType::class.java)
-        repo.deleteById(id) // FK конфликты поймаем handler-ом → 409
+        if (!constraintClient.checkRightTypeConstraint(id)) {
+            repo.deleteById(id)
+        } else {
+            throw ConstraintException(id, RightType::class.java)
+        }
     }
 
     // ==== Tree builders ====

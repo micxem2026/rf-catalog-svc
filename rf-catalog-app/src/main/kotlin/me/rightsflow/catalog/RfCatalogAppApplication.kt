@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
+import org.springframework.cloud.openfeign.EnableFeignClients
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.data.web.config.EnableSpringDataWebSupport
 
@@ -19,7 +20,8 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport
         "me.rightsflow.common",
         "me.rightsflow.righttypes",
         "me.rightsflow.oips",
-        "me.rightsflow.parties"
+        "me.rightsflow.parties",
+        "me.rightsflow.clients"
     ]
 )
 @EnableJpaRepositories(
@@ -41,6 +43,7 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport
     ]
 )
 @EnableDiscoveryClient
+@EnableFeignClients(basePackages = ["me.rightsflow.clients.feign"])
 @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 class RfCatalogAppApplication : CommandLineRunner {
 

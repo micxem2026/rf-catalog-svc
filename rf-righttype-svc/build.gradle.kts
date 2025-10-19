@@ -10,9 +10,13 @@ dependencies {
 
     implementation(project(":rf-common-lib"))
     implementation(project(":rf-feature-svc"))
+    implementation(project(":rf-contract-client"))
 
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:${property("springBootVersion")}")
+    implementation("ch.qos.logback:logback-classic:1.5.19") {
+        because("CVE-2025-11226 - Security fix")
+    }
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:${property("springBootVersion")}")
 
     // Database
@@ -24,10 +28,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // Swagger/OpenAPI
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
-    implementation("org.apache.commons:commons-lang3:3.18.0") {
-        because("CVE-2025-48924 - Security fix")
-    }
+    implementation(platform("org.springdoc:springdoc-openapi-bom:${property("springDocVersion")}"))
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
 
 }
 

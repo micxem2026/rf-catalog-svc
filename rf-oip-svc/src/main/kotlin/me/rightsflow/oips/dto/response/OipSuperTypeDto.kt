@@ -4,6 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "Вид ОИС")
 data class OipSuperTypeDto(
-    @Schema(description = "ID", example = "1") val id: Int,
-    @Schema(description = "Наименование", example = "Видео") val name: String
+    @field:Schema(description = "ID", example = "1") val id: Int,
+    @field:Schema(description = "Наименование", example = "Видео") val name: String
 )

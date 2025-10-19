@@ -2,7 +2,9 @@ package me.rightsflow.parties.service
 
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
+import me.rightsflow.clients.feign.ContractConstraintClient
 import me.rightsflow.common.config.SecuritySubjectProvider
+import me.rightsflow.common.exception.ConstraintException
 import me.rightsflow.common.exception.EntityNotFoundWithClsException
 import me.rightsflow.parties.dto.request.OrganizationCreateRequest
 import me.rightsflow.parties.dto.request.OrganizationUpdateRequest
@@ -19,6 +21,7 @@ import java.time.OffsetDateTime
 class OrganizationService(
     private val repo: OrganizationRepository,
     private val sub: SecuritySubjectProvider,
+    private val constraintClient: ContractConstraintClient,
     @PersistenceContext private val em: EntityManager
 ) {
     fun getById(id: Int): OrganizationDto =
@@ -59,7 +62,11 @@ class OrganizationService(
     @Transactional
     fun delete(id: Int) {
         if (!repo.existsById(id)) throw EntityNotFoundWithClsException(id, Organization::class.java)
-        repo.deleteById(id)
+        if (!constraintClient.checkOrganizationConstraint(id)) {
+            repo.deleteById(id)
+        } else {
+            throw ConstraintException(id, Organization::class.java)
+        }
     }
 
     private fun Organization.toDto() = OrganizationDto(
