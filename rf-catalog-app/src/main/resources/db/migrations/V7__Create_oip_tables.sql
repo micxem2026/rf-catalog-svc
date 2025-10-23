@@ -67,3 +67,90 @@ BEGIN
        INSERT INTO LOV_OIP_TYPE (ID_OIP_SUPER_TYPE, NAME) VALUES (v_id_super_type,'Пакет');
     END IF;
 END$$;
+
+-- Добавить колонки
+ALTER TABLE KLF_OIP ADD COLUMN IF NOT EXISTS HAS_CHILDREN BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE KLF_OIP ADD COLUMN IF NOT EXISTS HAS_PARENT BOOLEAN NOT NULL DEFAULT FALSE;
+
+-- partial индексы для оптимизации запросов
+CREATE INDEX IF NOT EXISTS idx_klf_oip_has_children
+    ON KLF_OIP(HAS_CHILDREN) WHERE HAS_CHILDREN = TRUE;
+
+CREATE INDEX IF NOT EXISTS idx_klf_oip_is_leaf
+    ON KLF_OIP(HAS_CHILDREN) WHERE HAS_CHILDREN = FALSE;
+
+CREATE INDEX IF NOT EXISTS idx_klf_oip_has_parent
+    ON KLF_OIP(HAS_PARENT) WHERE HAS_PARENT = TRUE;
+
+CREATE INDEX IF NOT EXISTS idx_klf_oip_is_root
+    ON KLF_OIP(HAS_PARENT) WHERE HAS_PARENT = FALSE;
+
+-- Функция триггера для автоматического обновления флагов
+CREATE OR REPLACE FUNCTION update_hierarchy_flags() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        -- При добавлении связи обновить флаги
+        UPDATE KLF_OIP SET HAS_CHILDREN = TRUE WHERE ID = NEW.ID_PARENT;
+        UPDATE KLF_OIP SET HAS_PARENT = TRUE WHERE ID = NEW.ID_OIP;
+
+    ELSIF TG_OP = 'DELETE' THEN
+        -- При удалении связи проверить, остались ли другие связи
+        UPDATE KLF_OIP
+        SET HAS_CHILDREN = EXISTS(
+            SELECT 1 FROM KLF_OIP_HIERARCHY WHERE ID_PARENT = OLD.ID_PARENT
+        )
+        WHERE ID = OLD.ID_PARENT;
+
+        UPDATE KLF_OIP
+        SET HAS_PARENT = EXISTS(
+            SELECT 1 FROM KLF_OIP_HIERARCHY WHERE ID_OIP = OLD.ID_OIP
+        )
+        WHERE ID = OLD.ID_OIP;
+
+    ELSIF TG_OP = 'UPDATE' THEN
+        -- При изменении связи обновить все 4 записи
+        IF OLD.ID_PARENT IS DISTINCT FROM NEW.ID_PARENT OR OLD.ID_OIP IS DISTINCT FROM NEW.ID_OIP THEN
+            -- Проверить старого родителя
+            UPDATE KLF_OIP
+            SET HAS_CHILDREN = EXISTS(
+                SELECT 1 FROM KLF_OIP_HIERARCHY WHERE ID_PARENT = OLD.ID_PARENT
+            )
+            WHERE ID = OLD.ID_PARENT;
+
+            -- Установить флаг для нового родителя
+            UPDATE KLF_OIP SET HAS_CHILDREN = TRUE WHERE ID = NEW.ID_PARENT;
+
+            -- Проверить старого потомка
+            UPDATE KLF_OIP
+            SET HAS_PARENT = EXISTS(
+                SELECT 1 FROM KLF_OIP_HIERARCHY WHERE ID_OIP = OLD.ID_OIP
+            )
+            WHERE ID = OLD.ID_OIP;
+
+            -- Установить флаг для нового потомка
+            UPDATE KLF_OIP SET HAS_PARENT = TRUE WHERE ID = NEW.ID_OIP;
+        END IF;
+    END IF;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION update_hierarchy_flags() IS
+    'Автоматически обновляет флаги HAS_CHILDREN и HAS_PARENT в таблице KLF_OIP при изменении иерархии';
+
+DROP TRIGGER IF EXISTS trg_update_hierarchy_flags ON KLF_OIP_HIERARCHY;
+
+CREATE TRIGGER trg_update_hierarchy_flags
+    AFTER INSERT OR UPDATE OR DELETE ON KLF_OIP_HIERARCHY
+    FOR EACH ROW EXECUTE FUNCTION update_hierarchy_flags();
+
+COMMENT ON COLUMN KLF_OIP.HAS_CHILDREN IS
+    'Флаг наличия потомков в таблице KLF_OIP_HIERARCHY';
+
+COMMENT ON COLUMN KLF_OIP.HAS_PARENT IS
+    'Флаг наличия родителя в таблице KLF_OIP_HIERARCHY';
+
+-- Обновить статистику таблицы для оптимизатора
+ANALYZE KLF_OIP;
+ANALYZE KLF_OIP_HIERARCHY;

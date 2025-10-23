@@ -42,8 +42,18 @@ class Oip(
     var duration: Duration? = null,
 
     @Column(name = "DESCRIPTION")
-    var description: String? = null
+    var description: String? = null,
+
+    @Column(name = "HAS_CHILDREN")
+    var hasChildren: Boolean = false,
+
+    @Column(name = "HAS_PARENT")
+    var hasParent: Boolean = false,
 ) : BaseAudit() {
+
+    enum class NodeType {
+         ROOT, LEAF, BRANCH, ISOLATED
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_OIP_SUPER_TYPE", referencedColumnName = "ID", insertable = false, updatable = false)

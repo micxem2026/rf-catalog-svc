@@ -36,6 +36,10 @@ spec:
       name: rf-catalog-svc
       labels:
         app: rf-catalog-svc
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/api/catalog/v1/actuator/prometheus"
+        prometheus.io/port: "8081" # <-- порт приложения
     spec:
       #      hostAliases:
       #        - ip: "192.168.1.22"
@@ -46,7 +50,8 @@ spec:
           image: gitlab.micxem:5050/rights-flow/rf-catalog-svc:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8081
+            - name: http
+              containerPort: 8081
               protocol: TCP
           args: [ "--spring.profiles.active=$(RF_CATALOG_SVC_PROFILES)"]
           env:

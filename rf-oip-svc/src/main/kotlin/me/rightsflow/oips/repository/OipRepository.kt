@@ -15,12 +15,16 @@ interface OipRepository : JpaRepository<Oip, Int> {
         from Oip o
         where (o.idOipSuperType = :idSuperType or :idSuperType is null)
           and (o.idOipType      = :idType or :idType is null)
+          and (o.hasChildren    = :hasChildren or :hasChildren is null)
+          and (o.hasParent      = :hasParent or :hasParent is null)
           and (lower(o.name) like lower(concat('%', :nameFilter, '%')) or :nameFilter is null)
         """
     )
     fun findByFilter(
         @Param("idSuperType") idSuperType: Int?,
         @Param("idType") idType: Int?,
+        @Param("hasChildren") hasChildren: Boolean?,
+        @Param("hasParent") hasParent: Boolean?,
         @Param("nameFilter") nameFilter: String?,
         pageable: Pageable
     ): Page<Oip>

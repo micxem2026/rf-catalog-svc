@@ -31,10 +31,22 @@ class OipService(
     fun findByFilter(
         idOipSuperType: Int?,
         idOipType: Int?,
+        nodeType: Oip.NodeType?,
         filter: String?,
         pageable: Pageable
     ): Page<OipDto> =
-        repo.findByFilter(idOipSuperType, idOipType, filter, pageable).map { it.toDto() }
+        when (nodeType) {
+            null ->  repo.findByFilter(idOipSuperType, idOipType, null, null,
+                                       filter, pageable).map { it.toDto() }
+            Oip.NodeType.ROOT -> repo.findByFilter(idOipSuperType, idOipType, true, false,
+                                                    filter, pageable).map { it.toDto() }
+            Oip.NodeType.LEAF -> repo.findByFilter(idOipSuperType, idOipType, false, true,
+                                                   filter, pageable).map { it.toDto() }
+            Oip.NodeType.BRANCH -> repo.findByFilter(idOipSuperType, idOipType, true, true,
+                                                     filter, pageable).map { it.toDto() }
+            Oip.NodeType.ISOLATED -> repo.findByFilter(idOipSuperType, idOipType, false, false,
+                                                       filter, pageable).map { it.toDto() }
+        }
 
     @Transactional
     fun create(req: OipCreateRequest): OipDto {
@@ -101,6 +113,8 @@ class OipService(
         oipSuperTypeName = this.oipSuperType?.name ?: "",
         oipTypeName = this.oipType?.name ?: "",
         description = this.description,
+        hasParent = this.hasParent,
+        hasChildren = this.hasChildren,
         createdBy = this.createdBy,
         createdAt = this.createdAt,
         updatedBy = this.updatedBy,

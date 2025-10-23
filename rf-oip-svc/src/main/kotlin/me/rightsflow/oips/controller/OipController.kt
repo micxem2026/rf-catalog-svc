@@ -1,6 +1,8 @@
 package me.rightsflow.oips.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -8,6 +10,7 @@ import me.rightsflow.common.config.*
 import me.rightsflow.oips.dto.request.OipCreateRequest
 import me.rightsflow.oips.dto.request.OipUpdateRequest
 import me.rightsflow.oips.dto.response.OipDto
+import me.rightsflow.oips.entity.Oip
 import me.rightsflow.oips.service.OipService
 import org.springdoc.core.annotations.ParameterObject
 import org.springframework.data.domain.Pageable
@@ -42,10 +45,19 @@ class OipController(
     fun findByFilter(
         @RequestParam(required = false) idOipSuperType: Int?,
         @RequestParam(required = false) idOipType: Int?,
+        @Parameter(name = "nodeType", schema = Schema(type = "string", allowableValues = ["ROOT", "LEAF", "BRANCH", "ISOLATED"]))
+        @RequestParam(required = false) nodeType: String?,
         @RequestParam(required = false) filter: String?,
         @PageableDefault(size = 20, sort = ["id"], direction = Sort.Direction.ASC) @ParameterObject pageable: Pageable
     ): PagedModel<OipDto> {
-        val page = service.findByFilter(idOipSuperType, idOipType, filter, pageable)
+        val nType = when (nodeType) {
+            "ROOT" -> Oip.NodeType.ROOT
+            "LEAF" -> Oip.NodeType.LEAF
+            "BRANCH" -> Oip.NodeType.BRANCH
+            "ISOLATED" -> Oip.NodeType.ISOLATED
+            else -> null
+        }
+        val page = service.findByFilter(idOipSuperType, idOipType, nType, filter, pageable)
         return PagedModel(page)
     }
 
