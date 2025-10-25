@@ -26,5 +26,6 @@ subprojects {
     extra["springCloudVersion"] = "2025.0.0"
     extra["springBootVersion"] = "3.5.5"
     extra["springDocVersion"] = "2.8.9"
+    extra["micrometerVersion"] = "1.5.5"
 
 }

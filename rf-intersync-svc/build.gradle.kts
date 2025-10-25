@@ -16,17 +16,19 @@ dependencies {
 
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:${property("springBootVersion")}")
-    implementation("ch.qos.logback:logback-classic:1.5.19") {
-        because("CVE-2025-11226 - Security fix")
-    }
 
     // Spring Cloud
     implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
     implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
 
     implementation("io.confluent:kafka-avro-serializer:8.0.0")
+
+    // Fix vulnerability
     implementation("org.apache.commons:commons-lang3:3.18.0") {
         because("CVE-2025-48924 - Security fix")
+    }
+    implementation("ch.qos.logback:logback-classic:1.5.19") {
+        because("CVE-2025-11226 - Security fix")
     }
 }
 
