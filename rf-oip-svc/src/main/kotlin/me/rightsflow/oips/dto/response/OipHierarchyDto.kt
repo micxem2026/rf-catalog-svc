@@ -14,7 +14,13 @@ data class OipHierarchyDto(
     @field:Schema(description = "Название родительского ОИС", example = "Пакет 1")
     val parentName: String,
     @field:Schema(description = "Название ОИС", example = "Москва слезам не верит")
-    val oipName: String,
+    val name: String,
+    @field:Schema(description = "Наличие родителя у ОИС", example = "false")
+    val hasParent: Boolean,
+    @field:Schema(description = "Наличие потомков у ОИС", example = "false")
+    val hasChildren: Boolean,
+    @field:Schema(description = "Количество потомков у ОИС", example = "0")
+    val childrenCount: Int,
     // audit
     @field:Schema(description = "Пользователь, создавший запись", example = "admin")
     val createdBy: String,

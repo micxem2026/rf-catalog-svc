@@ -34,5 +34,14 @@ data class OipCreateRequest(
     val duration: String? = null,
 
     @field:Schema(description = "Описание", example = "Описание ОИС")
-    val description: String? = null
+    val description: String? = null,
+
+    @field:Schema(description = "Оригинальное название")
+    @field:Size(max = 512)
+    val nativeName: String? = null,
+
+    @field:Schema(description = "Год релиза")
+    @field:Size(max = 50)
+    val releaseYear: String? = null
+
 )

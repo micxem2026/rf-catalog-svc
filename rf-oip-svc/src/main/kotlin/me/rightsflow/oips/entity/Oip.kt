@@ -49,10 +49,25 @@ class Oip(
 
     @Column(name = "HAS_PARENT")
     var hasParent: Boolean = false,
+
+    @Column(name = "CHILDREN_COUNT")
+    var childrenCount: Int = 0,
+
+    @Column(name = "NATIVE_NAME")
+    var nativeName: String? = null,
+
+    @Column("RELEASE_YEAR")
+    var releaseYear: String? = null
 ) : BaseAudit() {
 
     enum class NodeType {
          ROOT, LEAF, BRANCH, ISOLATED
+    }
+
+    enum class HierarchyDirection {
+        UP,      // только предки (родители вверх по иерархии)
+        DOWN,    // только потомки (дети вниз по иерархии)
+        BOTH     // и предки, и потомки (полная иерархия)
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

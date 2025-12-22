@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import me.rightsflow.common.config.*
+import me.rightsflow.common.entity.CustomPageResponse
+import me.rightsflow.common.entity.toCustomResponse
 import me.rightsflow.oips.dto.request.OipHierarchyCreateRequest
 import me.rightsflow.oips.dto.response.OipHierarchyDto
 import me.rightsflow.oips.service.OipHierarchyService
@@ -41,9 +43,9 @@ class OipHierarchyController(
     fun getChildren(
         @RequestParam idParent: Int,
         @PageableDefault(size = 20) @ParameterObject pageable: Pageable
-    ): PagedModel<OipHierarchyDto> {
+    ): CustomPageResponse<OipHierarchyDto> {
         val page = service.findChildrenByParent(idParent, pageable)
-        return PagedModel(page)
+        return page.toCustomResponse()
     }
 
     @GetMapping("/parents")
@@ -55,9 +57,9 @@ class OipHierarchyController(
     fun getParents(
         @RequestParam idOip: Int,
         @PageableDefault(size = 20, sort = ["id"], direction = Sort.Direction.ASC) @ParameterObject pageable: Pageable
-    ): PagedModel<OipHierarchyDto> {
+    ): CustomPageResponse<OipHierarchyDto> {
         val page = service.findParentsByOip(idOip, pageable)
-        return PagedModel(page)
+        return page.toCustomResponse()
     }
 
     @PostMapping

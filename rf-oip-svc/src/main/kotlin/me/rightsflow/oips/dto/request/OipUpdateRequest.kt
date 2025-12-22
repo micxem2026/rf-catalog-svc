@@ -33,5 +33,13 @@ data class OipUpdateRequest(
     val duration: String?,                             // nullable -> может стать null
 
     @field:Schema(description = "Описание", example = "Описание ОИС")
-    val description: String?                           // nullable -> может стать null
+    val description: String?,                          // nullable -> может стать null
+
+    @field:Schema(description = "Оригинальное название")
+    @field:Size(max = 512)
+    val nativeName: String? = null,
+
+    @field:Schema(description = "Год релиза")
+    @field:Size(max = 50)
+    val releaseYear: String? = null
 )

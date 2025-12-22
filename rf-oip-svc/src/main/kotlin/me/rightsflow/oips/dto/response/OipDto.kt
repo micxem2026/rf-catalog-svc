@@ -31,6 +31,14 @@ data class OipDto(
     val hasParent: Boolean,
     @field:Schema(description = "Наличие потомков у ОИС", example = "false")
     val hasChildren: Boolean,
+    @field:Schema(description = "Количество потомков у ОИС", example = "0")
+    val childrenCount: Int,
+    @field:Schema(description = "Оригинальное название")
+    val nativeName: String?,
+    @field:Schema(description = "Год релиза")
+    val releaseYear: String?,
+    @field:Schema(description = "Список родительских ОИС")
+    val parents: List<ParentInfo> = emptyList(),
     // audit
     @field:Schema(description = "Пользователь, создавший запись", example = "admin")
     val createdBy: String,
