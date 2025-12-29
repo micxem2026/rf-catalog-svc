@@ -19,6 +19,9 @@ class OpenApiConfig {
     @Value("\${RF_CATALOG_SVC_HOSTNAME_EXTERNAL:localhost:8090}")
     private lateinit var catalogHost: String
 
+    @Value("\${RF_CATALOG_SVC_PROTOCOL_EXTERNAL:http}")
+    private lateinit var protocol: String
+
     @Bean
     fun openAPI(): OpenAPI {
         return OpenAPI()
@@ -69,8 +72,8 @@ class OpenApiConfig {
                                                                         )*/
                                     .clientCredentials(
                                         OAuthFlow()
-                                            .tokenUrl("http://$catalogHost/auth/oauth2/token")
-                                            .refreshUrl("http://$catalogHost/auth/oauth2/token")
+                                            .tokenUrl("$protocol://$catalogHost/auth/oauth2/token")
+                                            .refreshUrl("$protocol://$catalogHost/auth/oauth2/token")
                                             .scopes(
                                                 Scopes()
                                                     .addString("read", "Чтение записей")

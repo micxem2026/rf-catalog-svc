@@ -17,6 +17,7 @@ metadata:
 data:
   hostname: catalog-svc
   hostname-external: rights.flow.me
+  protocol-external: https
   profiles: kuber,kafka
   catalog-db: pg-catalog-db-svc
 ---
@@ -75,6 +76,11 @@ spec:
                 configMapKeyRef:
                   name: rf-catalog-svc
                   key: hostname-external
+            - name: RF_CATALOG_SVC_PROTOCOL_EXTERNAL
+              valueFrom:
+                configMapKeyRef:
+                  name: rf-catalog-svc
+                  key: protocol-external
             - name: RF_AUTH_SVC_HOSTNAME
               valueFrom:
                 configMapKeyRef:
