@@ -10,12 +10,15 @@ import me.rightsflow.common.util.DurationUtil
 import me.rightsflow.oips.dto.request.OipCreateRequest
 import me.rightsflow.oips.dto.request.OipUpdateRequest
 import me.rightsflow.oips.dto.response.OipDto
-import me.rightsflow.oips.dto.response.OipHierarchyDto
 import me.rightsflow.oips.dto.response.ParentInfo
 import me.rightsflow.oips.entity.Oip
 import me.rightsflow.oips.entity.OipHierarchy
 import me.rightsflow.oips.repository.OipHierarchyRepository
 import me.rightsflow.oips.repository.OipRepository
+import me.rightsflow.pge.dto.PropertyDataDto
+import me.rightsflow.pge.dto.PropertyUpdateBatchDto
+import me.rightsflow.pge.dto.PropertyUpdateBatchRequest
+import me.rightsflow.pge.service.PgeService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -28,13 +31,17 @@ class OipService(
     private val ohRepo: OipHierarchyRepository,
     private val subProvider: SecuritySubjectProvider,
     private val contractConstraintClient: ContractConstraintClient,
+    private val pgeService: PgeService,
     @PersistenceContext private val em: EntityManager
 ) {
+
+    private val OIP_CODE_PG = "PG_OIP_VIDEO_PROP"
 
     fun getById(id: Int): OipDto {
         val oip = repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, Oip::class.java) }
         val parents = getParentInfos(id)
-        return oip.toDto(parents)
+        val props = pgeService.getPgData(OIP_CODE_PG, listOf(id.toLong()), subProvider.currentSub())
+        return oip.toDto(parents, props)
     }
 
     fun findByFilter1(
@@ -45,16 +52,30 @@ class OipService(
         pageable: Pageable
     ): Page<OipDto> =
         when (nodeType) {
-            null ->  repo.findByFilter(idOipSuperType, idOipType, null, null,
-                                       filter, pageable).map { it.toDto() }
-            Oip.NodeType.ROOT -> repo.findByFilter(idOipSuperType, idOipType, true, false,
-                                                    filter, pageable).map { it.toDto() }
-            Oip.NodeType.LEAF -> repo.findByFilter(idOipSuperType, idOipType, false, true,
-                                                   filter, pageable).map { it.toDto() }
-            Oip.NodeType.BRANCH -> repo.findByFilter(idOipSuperType, idOipType, true, true,
-                                                     filter, pageable).map { it.toDto() }
-            Oip.NodeType.ISOLATED -> repo.findByFilter(idOipSuperType, idOipType, false, false,
-                                                       filter, pageable).map { it.toDto() }
+            null -> repo.findByFilter(
+                idOipSuperType, idOipType, null, null,
+                filter, pageable
+            ).map { it.toDto() }
+
+            Oip.NodeType.ROOT -> repo.findByFilter(
+                idOipSuperType, idOipType, true, false,
+                filter, pageable
+            ).map { it.toDto() }
+
+            Oip.NodeType.LEAF -> repo.findByFilter(
+                idOipSuperType, idOipType, false, true,
+                filter, pageable
+            ).map { it.toDto() }
+
+            Oip.NodeType.BRANCH -> repo.findByFilter(
+                idOipSuperType, idOipType, true, true,
+                filter, pageable
+            ).map { it.toDto() }
+
+            Oip.NodeType.ISOLATED -> repo.findByFilter(
+                idOipSuperType, idOipType, false, false,
+                filter, pageable
+            ).map { it.toDto() }
         }
 
     fun findByFilter(
@@ -87,9 +108,13 @@ class OipService(
         // Получить родителей одним запросом для всех OIP на странице
         val parentsMap = getParentsMapForOips(oipIds)
 
+        // Получить все свойства одним запросом для всех OIP на странице
+        val propsMap = pgeService.getPgData(OIP_CODE_PG, oipIds.map { it.toLong() }, subProvider.currentSub())
+            .groupBy { it.idEntity }
+
         return page.map { oip ->
             val parents = parentsMap[oip.id] ?: emptyList()
-            oip.toDto(parents)
+            oip.toDto(parents, propsMap.getOrDefault(oip.id!!.toLong(), emptyList()))
         }
     }
 
@@ -113,7 +138,13 @@ class OipService(
 
         repo.saveAndFlush(e)
         em.refresh(e)
-        return e.toDto()
+
+        if (!req.propsUpdate.isEmpty())
+            pgeService.updatePropertiesBatch(PropertyUpdateBatchRequest(req.propsUpdate.map {
+                PropertyUpdateBatchDto(e.id!!.toLong(), OIP_CODE_PG, it.property, it.value)
+            }))
+
+        return getById(e.id!!)
     }
 
     @Transactional
@@ -135,9 +166,16 @@ class OipService(
         e.releaseYear = req.releaseYear
         e.updatedBy = subProvider.currentSub()
         e.updatedAt = OffsetDateTime.now()
+
         repo.saveAndFlush(e)
         em.refresh(e)
-        return e.toDto()
+
+        if (!req.propsUpdate.isEmpty())
+            pgeService.updatePropertiesBatch(PropertyUpdateBatchRequest(req.propsUpdate.map {
+                PropertyUpdateBatchDto(e.id!!.toLong(), OIP_CODE_PG, it.property, it.value)
+            }))
+
+        return getById(e.id!!)
     }
 
     @Transactional
@@ -356,31 +394,37 @@ class OipService(
         return ohRepo.findChildrenSortedByPartNum(parentId, pageable).map { it.toOipDto(parents) }
     }
 
-    private fun Oip.toDto(parents: List<ParentInfo> = emptyList()) = OipDto(
-        id = this.id!!,
-        guid = this.guid,
-        idOipSuperType = this.idOipSuperType,
-        idOipType = this.idOipType,
-        name = this.name,
-        partNum = this.partNum,
-        partCount = this.partCount,
-        duration = DurationUtil.toStringHHmmss(this.duration),
-        oipSuperTypeName = this.oipSuperType?.name ?: "",
-        oipTypeName = this.oipType?.name ?: "",
-        description = this.description,
-        hasParent = this.hasParent,
-        hasChildren = this.hasChildren,
-        childrenCount = this.childrenCount,
-        nativeName = this.nativeName,
-        releaseYear = this.releaseYear,
-        parents = parents,
-        createdBy = this.createdBy,
-        createdAt = this.createdAt,
-        updatedBy = this.updatedBy,
-        updatedAt = this.updatedAt
-    )
+    private fun Oip.toDto(parents: List<ParentInfo> = emptyList(), properties: List<PropertyDataDto> = emptyList()) =
+        OipDto(
+            id = this.id!!,
+            guid = this.guid,
+            idOipSuperType = this.idOipSuperType,
+            idOipType = this.idOipType,
+            name = this.name,
+            partNum = this.partNum,
+            partCount = this.partCount,
+            duration = DurationUtil.toStringHHmmss(this.duration),
+            oipSuperTypeName = this.oipSuperType?.name ?: "",
+            oipTypeName = this.oipType?.name ?: "",
+            description = this.description,
+            hasParent = this.hasParent,
+            hasChildren = this.hasChildren,
+            childrenCount = this.childrenCount,
+            nativeName = this.nativeName,
+            fullName = this.fullName,
+            releaseYear = this.releaseYear,
+            parents = parents,
+            properties = properties,
+            createdBy = this.createdBy,
+            createdAt = this.createdAt,
+            updatedBy = this.updatedBy,
+            updatedAt = this.updatedAt
+        )
 
-    private fun OipHierarchy.toOipDto(parents: List<ParentInfo> = emptyList()) = OipDto(
+    private fun OipHierarchy.toOipDto(
+        parents: List<ParentInfo> = emptyList(),
+        properties: List<PropertyDataDto> = emptyList()
+    ) = OipDto(
         id = this.idOip,
         guid = this.oip?.guid,
         idOipSuperType = this.oip!!.idOipSuperType,
@@ -396,8 +440,10 @@ class OipService(
         hasChildren = this.oip!!.hasChildren,
         childrenCount = this.oip!!.childrenCount,
         nativeName = this.oip?.nativeName,
+        fullName = this.oip?.fullName,
         releaseYear = this.oip?.releaseYear,
         parents = parents,
+        properties = properties,
         createdBy = this.oip!!.createdBy,
         createdAt = this.oip!!.createdAt,
         updatedBy = this.oip?.updatedBy,

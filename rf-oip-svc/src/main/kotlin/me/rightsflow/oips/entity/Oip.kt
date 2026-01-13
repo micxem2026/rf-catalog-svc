@@ -57,7 +57,10 @@ class Oip(
     var nativeName: String? = null,
 
     @Column("RELEASE_YEAR")
-    var releaseYear: String? = null
+    var releaseYear: String? = null,
+
+    @Column("FULL_NAME")
+    var fullName: String? = null
 ) : BaseAudit() {
 
     enum class NodeType {

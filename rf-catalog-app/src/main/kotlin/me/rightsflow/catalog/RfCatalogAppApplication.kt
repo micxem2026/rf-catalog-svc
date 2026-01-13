@@ -20,6 +20,7 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport
         "me.rightsflow.common",
         "me.rightsflow.righttypes",
         "me.rightsflow.oips",
+        "me.rightsflow.pge",
         "me.rightsflow.parties",
         "me.rightsflow.clients"
     ]

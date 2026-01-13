@@ -2,6 +2,7 @@ package me.rightsflow.oips.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Size
+import me.rightsflow.pge.dto.ShortPropertyUpdateBatchDto
 
 /**
  * По правилам:
@@ -39,7 +40,14 @@ data class OipUpdateRequest(
     @field:Size(max = 512)
     val nativeName: String? = null,
 
+    @field:Schema(description = "Полное название ОИС")
+    @field:Size(max = 512)
+    val fullName: String? = null,
+
     @field:Schema(description = "Год релиза")
     @field:Size(max = 50)
-    val releaseYear: String? = null
+    val releaseYear: String? = null,
+
+    @field:Schema(description = "Данные для обновления свойств" )
+    val propsUpdate: List<ShortPropertyUpdateBatchDto> = emptyList()
 )

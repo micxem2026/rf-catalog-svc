@@ -39,12 +39,8 @@ class OpenApiConfig {
             .servers(
                 listOf(
                     Server()
-                        .url("https://$catalogHost/api/catalog/v1")
-                        .description("Основной адрес микро-сервиса (https)"),
-                    Server()
-                        .url("http://$catalogHost/api/catalog/v1")
-                        .description("Основной адрес микро-сервиса (http)")
-
+                        .url("$protocol://$catalogHost/api/catalog/v1")
+                        .description("Основной адрес микро-сервиса")
                 )
             )
             .components(

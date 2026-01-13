@@ -12,7 +12,6 @@ dependencies {
 
     implementation(project(":rf-common-lib"))
     implementation(project(":rf-contract-client"))
-    implementation(project(":rf-pge-svc"))
 
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:${property("springBootVersion")}")

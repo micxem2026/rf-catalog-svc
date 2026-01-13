@@ -1,6 +1,8 @@
 package me.rightsflow.oips.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.Size
+import me.rightsflow.pge.dto.PropertyDataDto
 import java.time.OffsetDateTime
 
 @Schema(description = "Объект интеллектуальной собственности (ОИС)")
@@ -33,12 +35,16 @@ data class OipDto(
     val hasChildren: Boolean,
     @field:Schema(description = "Количество потомков у ОИС", example = "0")
     val childrenCount: Int,
-    @field:Schema(description = "Оригинальное название")
+    @field:Schema(description = "Оригинальное название ОИС")
     val nativeName: String?,
-    @field:Schema(description = "Год релиза")
+    @field:Schema(description = "Полное название ОИС")
+    val fullName: String?,
+    @field:Schema(description = "Год производства")
     val releaseYear: String?,
     @field:Schema(description = "Список родительских ОИС")
     val parents: List<ParentInfo> = emptyList(),
+    @field:Schema(description = "Список свойств ОИС")
+    val properties: List<PropertyDataDto> = emptyList(),
     // audit
     @field:Schema(description = "Пользователь, создавший запись", example = "admin")
     val createdBy: String,

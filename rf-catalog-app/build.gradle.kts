@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":rf-oip-svc"))
     implementation(project(":rf-parties-svc"))
     implementation(project(":rf-contract-client"))
+    implementation(project(":rf-pge-svc"))
 
     // Spring Boot starters
     implementation("org.springframework.boot:spring-boot-starter-web")
