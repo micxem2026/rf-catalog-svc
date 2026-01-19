@@ -9,6 +9,8 @@ data class CounterpartyDto(
     val id: Int,
     @field:Schema(description = "GUID", example = "013-123456789")
     val guid: String?,
+    @field:Schema(description = "Код 1С", example = "Н013-123")
+    val code1c: String?,
     @field:Schema(description = "Название контрагента", example = "ООО \"Рога и копыта\"")
     val name: String,
     @field:Schema(description = "Идентификатор организации связанной с контрагентом", example = "1")

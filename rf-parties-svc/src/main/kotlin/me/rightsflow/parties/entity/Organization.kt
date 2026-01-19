@@ -19,6 +19,9 @@ class Organization(
     @Column(name = "GUID", length = 255, unique = true)
     var guid: String? = null,
 
+    @Column(name = "CODE_1C", length = 50, unique = true)
+    var code_1c: String? = null,
+
     @Column(name = "NAME", nullable = false, length = 255)
     var name: String,
 

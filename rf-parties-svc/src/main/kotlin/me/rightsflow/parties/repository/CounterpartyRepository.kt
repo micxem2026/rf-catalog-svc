@@ -15,6 +15,7 @@ interface CounterpartyRepository : JpaRepository<Counterparty, Int> {
         from Counterparty o
         where (lower(o.name) like lower(concat('%', :filter, '%')) or 
                lower(o.guid) like lower(concat('%', :filter, '%')) or 
+               lower(o.code_1c) like lower(concat('%', :filter, '%')) or 
                :filter is null)
         """
     )

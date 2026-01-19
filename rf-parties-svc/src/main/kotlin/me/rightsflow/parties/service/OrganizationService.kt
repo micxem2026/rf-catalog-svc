@@ -34,6 +34,7 @@ class OrganizationService(
     fun create(req: OrganizationCreateRequest): OrganizationDto {
         val e = Organization(
             guid = req.guid,
+            code_1c = req.code1c?.uppercase(),
             name = requireNotNull(req.name) { "name is required" },
         ).apply {
             createdBy = sub.currentSub()
@@ -52,6 +53,7 @@ class OrganizationService(
         req.name?.let { e.name = it }
         // GUID nullable — меняем если прислали
         if (req.guid != null) e.guid = req.guid
+        if (req.code1c != null) e.code_1c = req.code1c.uppercase()
         e.updatedBy = sub.currentSub()
         e.updatedAt = OffsetDateTime.now()
         repo.saveAndFlush(e)
@@ -72,6 +74,7 @@ class OrganizationService(
     private fun Organization.toDto() = OrganizationDto(
         id = this.id!!,
         guid = this.guid,
+        code1c = this.code_1c,
         name = this.name,
         createdBy = this.createdBy,
         createdAt = this.createdAt,

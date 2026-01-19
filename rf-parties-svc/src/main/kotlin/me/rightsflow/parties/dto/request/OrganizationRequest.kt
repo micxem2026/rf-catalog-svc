@@ -11,6 +11,10 @@ data class OrganizationCreateRequest(
     @field:Size(max = 255)
     val guid: String?,
 
+    @field:Schema(description = "Код 1С", example = "Н014-123")
+    @field:Size(max = 50)
+    val code1c: String?,
+
     @field:Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
     @field:NotBlank @field:Size(max = 255)
     val name: String
@@ -23,6 +27,10 @@ data class OrganizationUpdateRequest(
     @field:Schema(description = "GUID", example = "014-12345678")
     @field:Size(max = 255)
     val guid: String?,
+
+    @field:Schema(description = "Код 1С", example = "Н014-123")
+    @field:Size(max = 50)
+    val code1c: String?,
 
     @field:Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
     @field:Size(max = 255)
