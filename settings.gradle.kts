@@ -1,6 +1,6 @@
-plugins {
+/*plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
-}
+}*/
 rootProject.name = "rf-catalog-svc"
 include(":rf-catalog-app")
 include(":rf-feature-svc")
