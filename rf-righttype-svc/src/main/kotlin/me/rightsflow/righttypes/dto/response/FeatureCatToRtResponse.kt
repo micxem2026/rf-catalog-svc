@@ -10,13 +10,13 @@ data class FeatureCatToRtResponse(
     val id: Int,
 
     @field:Schema(description = "ID типа права", example = "1")
-    val rightTypeId: Int,
+    val idRightType: Int,
 
     @field:Schema(description = "ID категории характеристики", example = "1")
-    val featureCategoryId: Int,
+    val idFeatureCategory: Int,
 
     @field:Schema(description = "ID характеристики", example = "1")
-    val defaultFeatureId: Int?,
+    val idDefaultFeature: Int?,
 
     @field:Schema(description = "Название типа права", example = "Все права")
     val rightTypeName: String,

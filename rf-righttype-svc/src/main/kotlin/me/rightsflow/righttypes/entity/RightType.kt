@@ -14,7 +14,7 @@ class RightType : BaseAudit() {
     var id: Int? = null
 
     @Column(name = "ID_PARENT")
-    var parentId: Int? = null
+    var idParent: Int? = null
 
     @Column(name = "NAME", nullable = false, length = 255)
     var name: String = ""

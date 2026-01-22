@@ -39,7 +39,7 @@ class RightTypeService(
     @Transactional
     fun create(req: RightTypeCreateRequest): RightTypeResponse {
         val query = em.createNativeQuery("select ins_klf_right_type(:p_id_parent, :p_name, :p_description, :p_created_by)")
-            .setParameter("p_id_parent", req.parentId)
+            .setParameter("p_id_parent", req.idParent)
             .setParameter("p_name", req.name)
             .setParameter("p_description", req.description)
             .setParameter("p_created_by", sub.currentSub())
@@ -51,7 +51,7 @@ class RightTypeService(
     fun update(id: Int, req: RightTypeUpdateRequest): RightTypeResponse {
         val query = em.createNativeQuery("select upd_klf_right_type(:p_id, :p_parent, :p_name, :p_description, :p_updated_by)")
             .setParameter("p_id", id)
-            .setParameter("p_parent", req.parentId)
+            .setParameter("p_parent", req.idParent)
             .setParameter("p_name", req.name)
             .setParameter("p_description", req.description)
             .setParameter("p_updated_by", sub.currentSub())
@@ -72,12 +72,12 @@ class RightTypeService(
     // ==== Tree builders ====
     private fun buildRecursiveTree(): List<RightTypeTreeNode> {
         val all = repo.findAllByOrderByIdAsc()
-        val byParent = all.groupBy { it.parentId }
+        val byParent = all.groupBy { it.idParent }
         fun build(parentId: Int?): List<RightTypeTreeNode> =
             byParent[parentId].orEmpty().map {
                 RightTypeTreeNode(
                     id = it.id!!,
-                    parentId = it.parentId,
+                    idParent = it.idParent,
                     name = it.name,
                     description = it.description,
                     createdBy = it.createdBy,
@@ -93,14 +93,14 @@ class RightTypeService(
 
     private fun buildPlainTree(): List<RightTypePlainItem> {
         val all = repo.findAllByOrderByIdAsc()
-        val byParent = all.groupBy { it.parentId }
+        val byParent = all.groupBy { it.idParent }
         val result = mutableListOf<RightTypePlainItem>()
 
         fun dfs(parentId: Int?, level: Int) {
             byParent[parentId].orEmpty().sortedBy { it.id }.forEach {
                 result += RightTypePlainItem(
                     id = it.id!!,
-                    parentId = it.parentId,
+                    parentId = it.idParent,
                     name = it.name,
                     description = it.description,
                     createdBy = it.createdBy,
@@ -118,7 +118,7 @@ class RightTypeService(
 
     private fun RightType.toDto() = RightTypeResponse(
         id = this.id!!,
-        parentId = this.parentId,
+        idParent = this.idParent,
         name = this.name,
         description = this.description,
         createdBy = this.createdBy,

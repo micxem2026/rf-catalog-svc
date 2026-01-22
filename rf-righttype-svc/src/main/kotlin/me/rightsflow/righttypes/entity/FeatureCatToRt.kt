@@ -19,13 +19,13 @@ class FeatureCatToRt : BaseAudit() {
     var id: Int? = null
 
     @Column(name = "ID_RIGHT_TYPE", nullable = false)
-    var rightTypeId: Int = 0
+    var idRightType: Int = 0
 
     @Column(name = "ID_FEATURE_CATEGORY", nullable = false)
-    var featureCategoryId: Int = 0
+    var idFeatureCategory: Int = 0
 
     @Column(name = "ID_DEF_FEATURE")
-    var defaultFeatureId: Int? = null
+    var idDefaultFeature: Int? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_RIGHT_TYPE", insertable = false, updatable = false)

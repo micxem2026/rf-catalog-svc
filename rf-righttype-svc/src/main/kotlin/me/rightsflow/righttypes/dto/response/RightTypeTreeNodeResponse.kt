@@ -10,7 +10,7 @@ data class RightTypeTreeNode(
     val id: Int,
 
     @field:Schema(description = "ID родителя типа права", example = "null")
-    val parentId: Int?,
+    val idParent: Int?,
 
     @field:Schema(description = "Название типа права", example = "FVOD")
     val name: String,

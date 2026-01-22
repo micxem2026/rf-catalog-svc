@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size
 data class RightTypeCreateRequest(
 
     @field:Schema(description = "Родительский ID (NULL для корня).", example = "0")
-    val parentId: Int? = null,
+    val idParent: Int? = null,
 
     @field:NotBlank(message = "Название типа права не может быть пустым")
     @field:Size(max = 255, message = "Название типа права не может превышать 255 символов")
@@ -24,7 +24,7 @@ data class RightTypeCreateRequest(
 data class RightTypeUpdateRequest(
 
     @field:Schema(description = "Новый родитель (NULL допустим для корня)")
-    val parentId: Int? = null,
+    val idParent: Int? = null,
 
     @field:Size(max = 255, message = "Название типа права не может превышать 255 символов")
     @field:Schema(description = "Новое имя. Если передать NULL, останется старое значение.")

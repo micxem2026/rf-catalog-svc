@@ -34,9 +34,9 @@ class FeatureCatToRtService(
         val now = OffsetDateTime.now()
         val who = sub.currentSub()
         val e = FeatureCatToRt().apply {
-            rightTypeId = req.rightTypeId
-            featureCategoryId = req.featureCategoryId
-            defaultFeatureId = req.defaultFeatureId
+            idRightType = req.idRightType
+            idFeatureCategory = req.idFeatureCategory
+            idDefaultFeature = req.idDefaultFeature
             createdBy = who
             createdAt = now
         }
@@ -49,9 +49,9 @@ class FeatureCatToRtService(
     fun update(id: Int, req: FeatureCatToRtUpdateRequest): FeatureCatToRtResponse {
         val e = repo.findById(id).orElseThrow { EntityNotFoundWithClsException(id, FeatureCatToRt::class.java) }
 
-        req.rightTypeId?.let { e.rightTypeId = it } // non-nullable, null -> не меняем
-        req.featureCategoryId?.let { e.featureCategoryId = it }
-        e.defaultFeatureId = req.defaultFeatureId
+        req.idRightType?.let { e.idRightType = it } // non-nullable, null -> не меняем
+        req.idFeatureCategory?.let { e.idFeatureCategory = it }
+        e.idDefaultFeature = req.idDefaultFeature
         e.updatedBy = sub.currentSub()
         e.updatedAt = OffsetDateTime.now()
         repo.saveAndFlush(e)
@@ -67,9 +67,9 @@ class FeatureCatToRtService(
 
     private fun FeatureCatToRt.toDto() = FeatureCatToRtResponse(
         id = this.id!!,
-        rightTypeId = this.rightTypeId,
-        featureCategoryId = this.featureCategoryId,
-        defaultFeatureId = this.defaultFeatureId,
+        idRightType = this.idRightType,
+        idFeatureCategory = this.idFeatureCategory,
+        idDefaultFeature = this.idDefaultFeature,
         rightTypeName = this.rightType?.name ?: "",
         featureCategoryName = this.featureCategory?.name ?: "",
         defaultFeatureName = this.defaultFeature?.featurePlain?.name,
