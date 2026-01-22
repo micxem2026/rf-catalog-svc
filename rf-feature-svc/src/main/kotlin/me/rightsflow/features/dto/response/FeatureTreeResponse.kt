@@ -10,7 +10,7 @@ interface FeatureTreeProjection {
     val idFeatureCategory: Int
     val categoryName: String
     val idFeaturePlain: Int
-    val plainName: String
+    val name: String
     val beginDate: LocalDate?
     val endDate: LocalDate?
     val createdBy: String
@@ -37,7 +37,7 @@ data class FeatureTreeResponse(
     override val idFeaturePlain: Int,
 
     @field:Schema(description = "Название простой характеристики", example = "Русский")
-    override val plainName: String,
+    override val name: String,
 
     @field:Schema(description = "Дата начала периода действия элемента. Если указан NULL, то дата начала периода не имеет ограничения снизу", example = "2022-01-01")
     override val beginDate: LocalDate?,
@@ -64,7 +64,7 @@ interface FeatureTreeRecursiveProjection {
     val idFeatureCategory: Int
     val categoryName: String
     val idFeaturePlain: Int
-    val plainName: String
+    val name: String
     val beginDate: LocalDate?
     val endDate: LocalDate?
     val createdBy: String
@@ -92,7 +92,7 @@ data class FeatureTreeRecursiveResponse(
     override val idFeaturePlain: Int,
 
     @field:Schema(description = "Название простой характеристики", example = "Русский")
-    override val plainName: String,
+    override val name: String,
 
     @field:Schema(description = "Дата начала периода действия элемента. Если указан NULL, то дата начала периода не имеет ограничения снизу", example = "2022-01-01")
     override val beginDate: LocalDate?,
@@ -123,7 +123,7 @@ interface FeatureTreePlainProjection {
     val idFeatureCategory: Int
     val categoryName: String
     val idFeaturePlain: Int
-    val plainName: String
+    val name: String
     val beginDate: LocalDate?
     val endDate: LocalDate?
     val createdBy: String
@@ -151,7 +151,7 @@ data class FeatureTreePlainResponse (
     override val idFeaturePlain: Int,
 
     @field:Schema(description = "Название простой характеристики", example = "Русский")
-    override val plainName: String,
+    override val name: String,
 
     @field:Schema(description = "Дата начала периода действия элемента. Если указан NULL, то дата начала периода не имеет ограничения снизу", example = "2022-01-01")
     override val beginDate: LocalDate?,

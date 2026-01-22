@@ -17,7 +17,7 @@ interface FeatureTreeRepository : JpaRepository<FeatureTree, Int> {
     @Query(
         """
     SELECT ft.id, ft.id_parent as idParent, ft.id_feature_category as idFeatureCategory, fc.name as categoryName, 
-           ft.id_feature_plain as idFeaturePlain, fp.name as plainName, lower(ft.validity_period) as beginDate, upper(ft.validity_period) as endDate, 
+           ft.id_feature_plain as idFeaturePlain, fp.name, lower(ft.validity_period) as beginDate, upper(ft.validity_period) as endDate, 
            ft.created_by as createdBy, ft.created_at as createdAt, ft.updated_by as updatedBy, ft.updated_at as updatedAt 
     FROM klf_feature_tree ft 
     LEFT JOIN klf_feature_category fc ON ft.id_feature_category = fc.id
@@ -30,7 +30,7 @@ interface FeatureTreeRepository : JpaRepository<FeatureTree, Int> {
     @Query(
         """
     SELECT ft.id, ft.id_parent as idParent, ft.id_feature_category as idFeatureCategory, fc.name as categoryName, 
-           ft.id_feature_plain as idFeaturePlain, fp.name as plainName, lower(ft.validity_period) as beginDate, upper(ft.validity_period) as endDate, 
+           ft.id_feature_plain as idFeaturePlain, fp.name, lower(ft.validity_period) as beginDate, upper(ft.validity_period) as endDate, 
            ft.created_by as createdBy, ft.created_at as createdAt, ft.updated_by as updatedBy, ft.updated_at as updatedAt 
     FROM klf_feature_tree ft 
     LEFT JOIN klf_feature_category fc ON ft.id_feature_category = fc.id
@@ -46,7 +46,7 @@ interface FeatureTreeRepository : JpaRepository<FeatureTree, Int> {
     @Query(
         """
     SELECT ft.id, ft.id_parent as idParent, ft.id_feature_category as idFeatureCategory, fc.name as categoryName, 
-           ft.id_feature_plain as idFeaturePlain, fp.name as plainName, lower(ft.validity_period) as beginDate, upper(ft.validity_period) as endDate, 
+           ft.id_feature_plain as idFeaturePlain, fp.name, lower(ft.validity_period) as beginDate, upper(ft.validity_period) as endDate, 
            ft.created_by as createdBy, ft.created_at as createdAt, ft.updated_by as updatedBy, ft.updated_at as updatedAt, 0 as level 
     FROM klf_feature_tree ft 
     LEFT JOIN klf_feature_category fc ON ft.id_feature_category = fc.id
@@ -61,7 +61,7 @@ interface FeatureTreeRepository : JpaRepository<FeatureTree, Int> {
     @Query(
         """
     SELECT ft.id, ft.id_parent as idParent, ft.id_feature_category as idFeatureCategory, fc.name as categoryName, 
-           ft.id_feature_plain as idFeaturePlain, fp.name as plainName, lower(ft.validity_period) as beginDate, upper(ft.validity_period) as endDate, 
+           ft.id_feature_plain as idFeaturePlain, fp.name, lower(ft.validity_period) as beginDate, upper(ft.validity_period) as endDate, 
            ft.created_by as createdBy, ft.created_at as createdAt, ft.updated_by as updatedBy, ft.updated_at as updatedAt 
     FROM klf_feature_tree ft 
     LEFT JOIN klf_feature_category fc ON ft.id_feature_category = fc.id

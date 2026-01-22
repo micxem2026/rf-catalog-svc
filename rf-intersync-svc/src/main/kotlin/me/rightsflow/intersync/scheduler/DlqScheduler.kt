@@ -19,13 +19,13 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class DlqScheduler(
-    @Value("\${spring.cloud.stream.kafka.binder.brokers}") // Получаем адрес брокеров
+    @param:Value("\${spring.cloud.stream.kafka.binder.brokers}") // Получаем адрес брокеров
     private val bootstrapServers: String,
-    @Value("\${spring.cloud.stream.kafka.binder.configuration.schema.registry.url}") // Получаем URL реестра
+    @param:Value("\${spring.cloud.stream.kafka.binder.configuration.schema.registry.url}") // Получаем URL реестра
     private val schemaRegistryUrl: String,
     private val kafkaTemplate: KafkaTemplate<String, GenericRecord?>,
     private val replicationService: ReplicationService,
-    @Value("\${spring.cloud.stream.kafka.bindings.userProcessor-in-0.consumer.dlq-name}")
+    @param:Value("\${spring.cloud.stream.kafka.bindings.userProcessor-in-0.consumer.dlq-name}")
     private val dlqTopic: String
 ) {
 
