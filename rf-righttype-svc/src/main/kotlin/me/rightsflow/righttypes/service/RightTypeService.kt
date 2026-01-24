@@ -38,10 +38,11 @@ class RightTypeService(
 
     @Transactional
     fun create(req: RightTypeCreateRequest): RightTypeResponse {
-        val query = em.createNativeQuery("select ins_klf_right_type(:p_id_parent, :p_name, :p_description, :p_created_by)")
+        val query = em.createNativeQuery("select ins_klf_right_type(:p_id_parent, :p_name, :p_description, :p_id_right_group, :p_created_by)")
             .setParameter("p_id_parent", req.idParent)
             .setParameter("p_name", req.name)
             .setParameter("p_description", req.description)
+            .setParameter("p_id_right_group", req.idRightGroup)
             .setParameter("p_created_by", sub.currentSub())
         val newId = query.singleResult as Int
         return getById(newId)
@@ -49,11 +50,12 @@ class RightTypeService(
 
     @Transactional
     fun update(id: Int, req: RightTypeUpdateRequest): RightTypeResponse {
-        val query = em.createNativeQuery("select upd_klf_right_type(:p_id, :p_parent, :p_name, :p_description, :p_updated_by)")
+        val query = em.createNativeQuery("select upd_klf_right_type(:p_id, :p_parent, :p_name, :p_description, :p_id_right_group, :p_updated_by)")
             .setParameter("p_id", id)
             .setParameter("p_parent", req.idParent)
             .setParameter("p_name", req.name)
             .setParameter("p_description", req.description)
+            .setParameter("p_id_right_group", req.idRightGroup)
             .setParameter("p_updated_by", sub.currentSub())
         val oldId = query.singleResult as Int
         return getById(oldId)
@@ -80,6 +82,7 @@ class RightTypeService(
                     idParent = it.idParent,
                     name = it.name,
                     description = it.description,
+                    idRightGroup = it.idRightGroup,
                     createdBy = it.createdBy,
                     createdAt = it.createdAt,
                     updatedBy = it.updatedBy,
@@ -102,6 +105,7 @@ class RightTypeService(
                     id = it.id!!,
                     parentId = it.idParent,
                     name = it.name,
+                    idRightGroup = it.idRightGroup,
                     description = it.description,
                     createdBy = it.createdBy,
                     createdAt = it.createdAt,
@@ -121,6 +125,7 @@ class RightTypeService(
         idParent = this.idParent,
         name = this.name,
         description = this.description,
+        idRightGroup = this.idRightGroup,
         createdBy = this.createdBy,
         createdAt = this.createdAt,
         updatedBy = this.updatedBy,

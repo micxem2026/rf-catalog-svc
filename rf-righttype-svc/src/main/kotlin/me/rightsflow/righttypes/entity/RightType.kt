@@ -22,6 +22,9 @@ class RightType : BaseAudit() {
     @Column(name = "DESCRIPTION", length = 1023)
     var description: String? = null
 
+    @Column(name = "ID_RIGHT_GROUP", nullable = false)
+    var idRightGroup: Int = 4
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PARENT", insertable = false, updatable = false)
     val parent: RightType? = null

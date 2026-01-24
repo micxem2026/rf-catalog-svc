@@ -18,6 +18,9 @@ data class RightTypeTreeNode(
     @field:Schema(description = "Описание типа права", example = "Бесплатное видео по запросу")
     val description: String?,
 
+    @field:Schema(description = "ID группы прав", example = "4")
+    val idRightGroup: Int,
+
     @field:Schema(description = "Пользователь, создавший запись", example = "admin")
     val createdBy: String,
 
@@ -48,6 +51,9 @@ data class RightTypePlainItem(
 
     @field:Schema(description = "Описание типа права", example = "Бесплатное видео по запросу")
     val description: String?,
+
+    @field:Schema(description = "ID группы прав", example = "4")
+    val idRightGroup: Int,
 
     @field:Schema(description = "Пользователь, создавший запись", example = "admin")
     val createdBy: String,

@@ -17,7 +17,10 @@ data class RightTypeCreateRequest(
 
     @field:Size(max = 1023, message = "Описание типа права не может превышать 1023 символа")
     @field:Schema(description = "Описание типа права", example = "Бесплатное видео по запросу")
-    val description: String?
+    val description: String?,
+
+    @field:Schema(description = "ID группы прав", example = "4")
+    val idRightGroup: Int
 )
 
 @Schema(description = "Запрос на изменение типа прав")
@@ -32,5 +35,8 @@ data class RightTypeUpdateRequest(
 
     @field:Size(max = 1023, message = "Описание типа права не может превышать 1023 символа")
     @field:Schema(description = "Описание типа права", example = "Бесплатное видео по запросу")
-    val description: String?
+    val description: String?,
+
+    @field:Schema(description = "ID группы прав", example = "4")
+    val idRightGroup: Int
 )
