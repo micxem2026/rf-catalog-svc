@@ -1,6 +1,9 @@
+ALTER TABLE rightsflow.lov_object
+    ALTER COLUMN table_name TYPE character varying(512) COLLATE pg_catalog."default";
+
 -- LOV_OBJECT
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (1, 'Язык', 'SYNC__KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=6', 1)
+VALUES (1, 'Язык субтитров', '(select t.id, p.name, t.id_feature_category from SYNC__KLF_FEATURE_PLAIN p join SYNC__KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=6', 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
@@ -12,19 +15,19 @@ VALUES (3, 'Объект интеллектуальной собственнос
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (4, 'Качество контента', 'SYNC__KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=7', 1)
+VALUES (4, 'Качество контента', '(select t.id, p.name, t.id_feature_category from SYNC__KLF_FEATURE_PLAIN p join SYNC__KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=7', 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (5, 'Профиль технического повтора', 'SYNC__KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=8', 1)
+VALUES (5, 'Профиль технического повтора', '(select t.id, p.name, t.id_feature_category from SYNC__KLF_FEATURE_PLAIN p join SYNC__KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=8', 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (6, 'Канал дистрибуции', 'SYNC__KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=9', 1)
+VALUES (6, 'Канал дистрибуции', '(select t.id, p.name, t.id_feature_category from SYNC__KLF_FEATURE_PLAIN p join SYNC__KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=9', 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (7, 'Страна производства товара', 'SYNC__KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=10', 1)
+VALUES (7, 'Страна производства товара', '(select t.id, p.name, t.id_feature_category from SYNC__KLF_FEATURE_PLAIN p join SYNC__KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=10', 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
@@ -32,42 +35,48 @@ VALUES (8, 'Валюта', 'LOV_CURRENCY', null, 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (9, 'Периодичность', 'SYNC__KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=11', 1)
+VALUES (9, 'Периодичность', '(select t.id, p.name, t.id_feature_category from SYNC__KLF_FEATURE_PLAIN p join SYNC__KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=11', 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (10, 'Возрастной маркер', 'KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=12', 0)
+VALUES (10, 'Возрастной маркер', '(select t.id, p.name, t.id_feature_category from KLF_FEATURE_PLAIN p join KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=12', 0)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (11, 'Страна производства', 'KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=13', 0)
+VALUES (11, 'Страна производства', '(select t.id, p.name, t.id_feature_category from KLF_FEATURE_PLAIN p join KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=13', 0)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (12, 'Жанр', 'KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=14', 0)
+VALUES (12, 'Жанр', '(select t.id, p.name, t.id_feature_category from KLF_FEATURE_PLAIN p join KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=14', 0)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (13, 'Режиссёр', 'KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=15', 0)
+VALUES (13, 'Режиссёр', '(select t.id, p.name, t.id_feature_category from KLF_FEATURE_PLAIN p join KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=15', 0)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (14, 'Сценарист', 'KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=16', 0)
+VALUES (14, 'Сценарист', '(select t.id, p.name, t.id_feature_category from KLF_FEATURE_PLAIN p join KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=16', 0)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (15, 'Продюсер', 'KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=17', 0)
+VALUES (15, 'Продюсер', '(select t.id, p.name, t.id_feature_category from KLF_FEATURE_PLAIN p join KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=17', 0)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (16, 'Актёр', 'KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=18', 0)
+VALUES (16, 'Актёр', '(select t.id, p.name, t.id_feature_category from KLF_FEATURE_PLAIN p join KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=18', 0)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
-VALUES (17, 'Студия производитель', 'KLF_FEATURE_PLAIN', 'ID_FEATURE_CATEGORY=19', 0)
+VALUES (17, 'Студия производитель', '(select t.id, p.name, t.id_feature_category from KLF_FEATURE_PLAIN p join KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=19', 0)
 ON CONFLICT (ID) DO NOTHING;
 
+INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
+VALUES (18, 'Язык озвучки', '(select t.id, p.name, t.id_feature_category from SYNC__KLF_FEATURE_PLAIN p join SYNC__KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=1', 1)
+ON CONFLICT (ID) DO NOTHING;
 
+INSERT INTO LOV_OBJECT (ID, NAME, TABLE_NAME, WHERE_FILTER, SVC_ID)
+VALUES (19, 'Язык использования', '(select t.id, p.name, t.id_feature_category from SYNC__KLF_FEATURE_PLAIN p join SYNC__KLF_FEATURE_TREE t on t.id_feature_plain = p.id)', 'ID_FEATURE_CATEGORY=2', 1)
+ON CONFLICT (ID) DO NOTHING;
 -----------------------------------------------------------------------------
 -- LOV_PGE_PROP_TYPE
 INSERT INTO LOV_PGE_PROP_TYPE (ID, NAME, ID_OBJ, USE_MULTI_SELECT)
@@ -95,11 +104,11 @@ VALUES (6, 'Дата и время', null, false)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PROP_TYPE (ID, NAME, ID_OBJ, USE_MULTI_SELECT)
-VALUES (7, 'Справочник "Языки"', 1, true)
+VALUES (7, 'Справочник "Язык субтитров"', 1, true)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PROP_TYPE (ID, NAME, ID_OBJ, USE_MULTI_SELECT)
-VALUES (8, 'Справочник "Языки (О)"', 1, false)
+VALUES (8, 'Справочник "Язык озвучки"', 18, true)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PROP_TYPE (ID, NAME, ID_OBJ, USE_MULTI_SELECT)
@@ -158,6 +167,9 @@ INSERT INTO LOV_PGE_PROP_TYPE (ID, NAME, ID_OBJ, USE_MULTI_SELECT)
 VALUES (22, 'Справочник "Студия производитель"', 17, true)
 ON CONFLICT (ID) DO NOTHING;
 
+INSERT INTO LOV_PGE_PROP_TYPE (ID, NAME, ID_OBJ, USE_MULTI_SELECT)
+VALUES (23, 'Справочник "Язык использования"', 19, true)
+ON CONFLICT (ID) DO NOTHING;
 
 ---------------------------------------------------------------------------------------
 -- LOV_PGE_PROPERTY
@@ -166,7 +178,7 @@ VALUES (1, 'Язык субтитров', 7, 'subtitleLanguage')
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PROPERTY (ID, NAME, ID_PROP_TYPE, CODE)
-VALUES (2, 'Язык озвучки', 7, 'voiceLanguage')
+VALUES (2, 'Язык озвучки', 8, 'voiceLanguage')
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PROPERTY (ID, NAME, ID_PROP_TYPE, CODE)
@@ -222,7 +234,7 @@ VALUES (15, 'Страны производства товаров', 12, 'goodsOr
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PROPERTY (ID, NAME, ID_PROP_TYPE, CODE)
-VALUES (16, 'Разрешённый язык использования', 7, 'allowedUseLanguage')
+VALUES (16, 'Разрешённый язык использования', 23, 'allowedUseLanguage')
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PROPERTY (ID, NAME, ID_PROP_TYPE, CODE)
@@ -388,11 +400,11 @@ ON CONFLICT (ID) DO NOTHING;
 -- LOV_PGE_PGL_DTL
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (1, 11, 1, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{970}', 1)
+VALUES (1, 11, 1, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{}', 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (2, 11, 2, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{970}', 2)
+VALUES (2, 11, 2, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{}', 2)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
@@ -400,7 +412,7 @@ VALUES (3, 11, 3, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{}', 3)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (4, 11, 4, '^[0-9]+$',  '0', 4)
+VALUES (4, 11, 4, '^\d+(\.0+)?$',  '0', 4)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
@@ -409,11 +421,11 @@ ON CONFLICT (ID) DO NOTHING;
 
 -----------------
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (6, 12, 1, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{970}', 1)
+VALUES (6, 12, 1, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{}', 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (7, 12, 2, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{970}', 2)
+VALUES (7, 12, 2, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{}', 2)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
@@ -421,11 +433,11 @@ VALUES (8, 12, 3, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{}', 3)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (9, 12, 6, '^(да|нет|true|false)$',  'нет', 4)
+VALUES (9, 12, 6, '^(да|нет|true|false)$',  'false', 4)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (10, 12, 7, '^[0-9]+$',  '0', 5)
+VALUES (10, 12, 7, '^\d+(\.0+)?$',  '0', 5)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
@@ -433,7 +445,7 @@ VALUES (11, 12, 8, '^(да|нет|true|false)$',  'нет', 6)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (12, 12, 9, '^[0-9]+$',  '0', 7)
+VALUES (12, 12, 9, '^\d+(\.0+)?$',  '0', 7)
 ON CONFLICT (ID) DO NOTHING;
 
 
@@ -443,15 +455,15 @@ VALUES (13, 13, 10, '^\{[0-9]+(,[0-9]+){0,}\}$',  '{}', 1)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (14, 13, 11, '^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|2[0-9]|30])\d{2}$', null, 2)
+VALUES (14, 13, 11, '^(19|2[0-9]|30])\d{2}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[01])$', null, 2)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (15, 13, 12, '^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|2[0-9]|30])\d{2}$', null, 3)
+VALUES (15, 13, 12, '^(19|2[0-9]|30])\d{2}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[01])$', null, 3)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (16, 13, 13, '^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|2[0-9]|30])\d{2}$', null, 4)
+VALUES (16, 13, 13, '^(19|2[0-9]|30])\d{2}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[01])$', null, 4)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
@@ -566,15 +578,15 @@ VALUES (43, 14, 40, '^[0-9]+\.[0-9]+$', '0.0', 14)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (44, 14, 41, '^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|2[0-9]|30])\d{2}$', null, 15)
+VALUES (44, 14, 41, '^(19|2[0-9]|30])\d{2}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[01])$', null, 15)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (45, 14, 42, '^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|2[0-9]|30])\d{2}$', null, 16)
+VALUES (45, 14, 42, '^(19|2[0-9]|30])\d{2}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[01])$', null, 16)
 ON CONFLICT (ID) DO NOTHING;
 
 INSERT INTO LOV_PGE_PGL_DTL (ID, ID_PGL, ID_PROPERTY, PROPERTY_FORMAT, DEFAULT_VALUE, PG_ORDER)
-VALUES (46, 14, 43, '^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|2[0-9]|30])\d{2}$', null, 17)
+VALUES (46, 14, 43, '^(19|2[0-9]|30])\d{2}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[01])$', null, 17)
 ON CONFLICT (ID) DO NOTHING;
 
 
