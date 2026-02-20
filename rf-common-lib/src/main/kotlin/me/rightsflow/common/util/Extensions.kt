@@ -8,3 +8,6 @@ fun Range<LocalDate>.realUpper(): LocalDate? =
 
 fun Range<LocalDate>.realLower(): LocalDate? =
     if (lower() == null) null else if (!isLowerBoundClosed) lower().plusDays(1) else lower()
+
+inline fun <reified T : Enum<T>> String.toEnumOrNull(): T? =
+    enumValues<T>().find { it.name == this }

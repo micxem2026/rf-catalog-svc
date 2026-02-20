@@ -36,6 +36,9 @@ class CounterpartyService(
             guid = req.guid,
             code_1c = req.code1c?.uppercase(),
             name = requireNotNull(req.name) { "name is required" },
+            country = req.country,
+            address = req.address,
+            tin = req.tin
         ).apply {
             createdBy = sub.currentSub()
             createdAt = OffsetDateTime.now()
@@ -52,8 +55,11 @@ class CounterpartyService(
         // NOT NULL поля: если пришло null — НЕ меняем
         req.name?.let { e.name = it }
         // GUID nullable — меняем если прислали
-        if (req.guid != null) e.guid = req.guid
-        if (req.code1c != null) e.code_1c = req.code1c.uppercase()
+        e.guid = req.guid
+        e.code_1c = req.code1c?.uppercase()
+        e.country = req.country
+        e.address = req.address
+        e.tin = req.tin
         e.updatedBy = sub.currentSub()
         e.updatedAt = OffsetDateTime.now()
         repo.saveAndFlush(e)
@@ -76,6 +82,9 @@ class CounterpartyService(
         guid = this.guid,
         code1c = this.code_1c,
         name = this.name,
+        country = this.country,
+        address = this.address,
+        tin = this.tin,
         idOrgRef = this.idOrgRef,
         nameOrgRef = this.organization?.name,
         createdBy = this.createdBy,

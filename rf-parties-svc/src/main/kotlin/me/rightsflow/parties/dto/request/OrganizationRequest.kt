@@ -15,6 +15,17 @@ data class OrganizationCreateRequest(
     @field:Size(max = 50)
     val code1c: String?,
 
+    @field:Schema(description = "Страна контрагента", example = "Россия")
+    @field:Size(max = 32)
+    val country: String?,
+
+    @field:Schema(description = "Адрес контрагента", example = "111222, г.Москва, ул. Правды, дом 101, строение 6")
+    val address: String?,
+
+    @field:Schema(description = "ИНН контрагента", example = "111111111111")
+    @field:Size(max = 32)
+    val tin: String?,
+
     @field:Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
     @field:NotBlank @field:Size(max = 255)
     val name: String
@@ -31,6 +42,17 @@ data class OrganizationUpdateRequest(
     @field:Schema(description = "Код 1С", example = "Н014-123")
     @field:Size(max = 50)
     val code1c: String?,
+
+    @field:Schema(description = "Страна контрагента", example = "Россия")
+    @field:Size(max = 32)
+    val country: String?,
+
+    @field:Schema(description = "Адрес контрагента", example = "111222, г.Москва, ул. Правды, дом 101, строение 6")
+    val address: String?,
+
+    @field:Schema(description = "ИНН контрагента", example = "111111111111")
+    @field:Size(max = 32)
+    val tin: String?,
 
     @field:Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
     @field:Size(max = 255)

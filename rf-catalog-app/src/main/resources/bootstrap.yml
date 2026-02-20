@@ -17,8 +17,11 @@ eureka:
     serviceUrl:
       defaultZone: ${RF_EUREKA_SERVICE_URL:http://localhost:8761/eureka/}
 
-#logging:
-#  level:
+logging:
+  level:
+     org.springframework.cloud.stream.function: INFO
+#    org.apache.kafka.common.utils.AppInfoParser: WARN
+#    org.apache.kafka.common.metrics.Metrics: WARN
 #    org.springframework.security: TRACE
 #    org.springframework.boot.actuate: INFO
 #    org.springframework.web: INFO

@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":rf-parties-svc"))
     implementation(project(":rf-contract-client"))
     implementation(project(":rf-pge-svc"))
+    implementation(project(":rf-acl-svc"))
 
     // Spring Boot starters
     implementation("org.springframework.boot:spring-boot-starter-web")

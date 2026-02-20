@@ -1,9 +1,6 @@
 package me.rightsflow.intersync.scheduler
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
-import me.rightsflow.intersync.config.MessageConverter
-import me.rightsflow.intersync.dto.UserAvroMessage
-import me.rightsflow.intersync.service.ReplicationService
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -18,22 +15,31 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 @Component
-class DlqScheduler(
-    @param:Value("\${spring.cloud.stream.kafka.binder.brokers}") // Получаем адрес брокеров
+class GenericDlqScheduler(
+    @param:Value("\${rightsflow.app.dlg-topic-poll-seconds}")
+    private val dlqTopicPollSeconds: Long,
+    @param:Value("\${spring.cloud.stream.kafka.binder.brokers}")
     private val bootstrapServers: String,
-    @param:Value("\${spring.cloud.stream.kafka.binder.configuration.schema.registry.url}") // Получаем URL реестра
+    @param:Value("\${spring.cloud.stream.kafka.binder.configuration.schema.registry.url}")
     private val schemaRegistryUrl: String,
     private val kafkaTemplate: KafkaTemplate<String, GenericRecord?>,
-    private val replicationService: ReplicationService,
-    @param:Value("\${spring.cloud.stream.kafka.bindings.userProcessor-in-0.consumer.dlq-name}")
-    private val dlqTopic: String
+    private val handlers: List<DlqHandler> // все зарегистрированные хендлеры
 ) {
 
-    private val log = LoggerFactory.getLogger(DlqScheduler::class.java)
+    private val log = LoggerFactory.getLogger(GenericDlqScheduler::class.java)
 
     @Scheduled(cron = "0 0/5 * * * *")
-    fun processDlq() {
-        log.info("Start processing a DLQ topic: $dlqTopic")
+    fun processAllDlqs() {
+        if (handlers.isEmpty()) {
+            log.info("No DLQ handlers registered")
+            return
+        }
+        handlers.forEach { processDlqTopic(it) }
+    }
+
+    private fun processDlqTopic(handler: DlqHandler) {
+        val dlqTopic = handler.topic
+        log.info("Start processing DLQ: $dlqTopic")
 
         val consumerProps = mapOf(
             ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
@@ -50,10 +56,8 @@ class DlqScheduler(
         )
 
         KafkaConsumer<String, GenericRecord?>(consumerProps).use { consumer ->
-
             consumer.subscribe(listOf(dlqTopic))
-
-            val records = consumer.poll(Duration.ofSeconds(10))
+            val records = consumer.poll(Duration.ofSeconds(dlqTopicPollSeconds))
 
             if (records.isEmpty) {
                 log.info("DLQ topic $dlqTopic is empty")
@@ -64,75 +68,58 @@ class DlqScheduler(
             var successCount = 0
             val totalCount = records.count()
 
-            log.info("Received $totalCount messages to process from DLQ")
+            log.info("Received $totalCount messages from DLQ $dlqTopic")
 
-            // 1. Пытаемся обработать каждое сообщение из пачки
             for (record in records) {
+                val key = record.key()
                 try {
-
-                    val keyString = record.key()
-                    if (keyString == null) {
-                        log.warn("A tombstone message without a key was received. The event will be ignored.")
+                    if (key == null) {
+                        log.warn("Tombstone without key, ignoring [partition=${record.partition()}, offset=${record.offset()}]")
+                        continue
                     }
-                    if (keyString != null) {
-                        val syncId = keyString.substringAfter("=").substringBefore("}").trim().toInt()
-                        val userDto = when (record.value()) {
-                            null -> UserAvroMessage(
-                                null, "", "", "", "", false,
-                                false, false, 0L, 0L, 0L, 0L, ""
-                            )
-
-                            is GenericRecord -> MessageConverter.convertToUserAvroMessage(record.value() as GenericRecord)
-                        }
-                        replicationService.processUser(syncId, userDto)
-                        successCount++
-                    }
-                    log.debug("Successfully processed message for user: ${keyString} [partition=${record.partition()}, offset=${record.offset()}]")
+                    handler.process(key, record.value())
+                    successCount++
+                    log.debug("Processed key=$key [partition=${record.partition()}, offset=${record.offset()}]")
                 } catch (e: Exception) {
-                    log.error("Error processing message from DLQ for user: ${record.key()} [partition=${record.partition()}, offset=${record.offset()}]. It will be postponed. Error: ${e.message}")
+                    log.error(
+                        "Error processing key=${key} [partition=${record.partition()}, offset=${record.offset()}]. Will be returned to DLQ. ${e.message}",
+                        e
+                    )
                     failedRecords.add(record)
                 }
             }
 
-            // 2. КЛЮЧЕВОЕ УСЛОВИЕ: действуем, только если был хоть какой-то прогресс
             if (successCount > 0) {
-                log.info("Processed successfully: $successCount from $totalCount. Failed: ${failedRecords.size}")
+                log.info("DLQ $dlqTopic: success=$successCount, failed=${failedRecords.size} of $totalCount")
 
-                // 3. Возвращаем неудачные сообщения обратно в DLQ
                 if (failedRecords.isNotEmpty()) {
-                    returnFailedMessagesToDlq(failedRecords)
+                    returnFailedMessagesToDlq(dlqTopic, failedRecords)
                 }
 
-                // 4. Коммитим смещение для всей пачки
                 consumer.commitSync()
-                log.info("Offset is committed for the processed batch of $totalCount messages")
-
+                log.info("Committed offsets for DLQ $dlqTopic batch of $totalCount")
             } else {
-                // Если successCount == 0, значит вся пачка сбойная
-                log.warn("Could not process any messages from $totalCount. No action taken, offset not committed.")
+                log.warn("DLQ $dlqTopic: no messages processed successfully, no commit performed")
             }
         }
     }
 
-    private fun returnFailedMessagesToDlq(failedRecords: List<ConsumerRecord<String, GenericRecord?>>) {
-        log.warn("Returning ${failedRecords.size} messages back to the DLQ...")
-
-        var returnedCount = 0
-        var returnErrors = 0
-
+    private fun returnFailedMessagesToDlq(
+        dlqTopic: String,
+        failedRecords: List<ConsumerRecord<String, GenericRecord?>>
+    ) {
+        log.warn("Returning ${failedRecords.size} messages back to DLQ $dlqTopic...")
+        var returned = 0
+        var errors = 0
         failedRecords.forEach { record ->
             try {
                 kafkaTemplate.send(dlqTopic, record.key(), record.value()).get(5, TimeUnit.SECONDS)
-                returnedCount++
+                returned++
             } catch (e: Exception) {
-                returnErrors++
-                log.error(
-                    "Error returning message in DLQ for user: ${record.key()} [offset=${record.offset()}]: ${e.message}",
-                    e
-                )
+                errors++
+                log.error("Return error for key=${record.key()} [offset=${record.offset()}]: ${e.message}", e)
             }
         }
-
-        log.info("Completed returning failed messages to DLQ: Successfully returned=$returnedCount, errors=$returnErrors")
+        log.info("Returned to DLQ $dlqTopic: ok=$returned, errors=$errors")
     }
 }

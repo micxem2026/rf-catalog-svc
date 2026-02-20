@@ -22,6 +22,15 @@ class Organization(
     @Column(name = "CODE_1C", length = 50, unique = true)
     var code_1c: String? = null,
 
+    @Column(name = "COUNTRY", length = 32)
+    var country: String?,
+
+    @Column(name = "ADDRESS")
+    var address: String?,
+
+    @Column(name = "TIN", length = 32)
+    var tin: String?,
+
     @Column(name = "NAME", nullable = false, length = 255)
     var name: String,
 

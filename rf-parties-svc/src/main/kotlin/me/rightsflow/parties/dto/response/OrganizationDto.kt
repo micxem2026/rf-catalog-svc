@@ -13,6 +13,12 @@ data class OrganizationDto(
     val code1c: String?,
     @field:Schema(description = "Название организации", example = "ООО \"Рога и копыта\"")
     val name: String,
+    @field:Schema(description = "Страна контрагента", example = "Россия")
+    val country: String?,
+    @field:Schema(description = "Адрес контрагента", example = "111222, г.Москва, ул. Правды, дом 101, строение 6")
+    val address: String?,
+    @field:Schema(description = "ИНН контрагента", example = "111111111111")
+    val tin: String?,
     // audit
     @field:Schema(description = "Пользователь, создавший запись", example = "admin")
     val createdBy: String,
