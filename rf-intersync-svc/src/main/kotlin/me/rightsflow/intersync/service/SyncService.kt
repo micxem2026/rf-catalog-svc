@@ -59,7 +59,7 @@ class SyncService {
         query.setParameter("pUserType", dto.user_type)
         // Выполнение запроса и возврат результата
 
-        println("UPD =>"+dto.updated_at?.let { microsToLocalDateTime(it) })
+        //println("UPD =>"+dto.updated_at?.let { microsToLocalDateTime(it) })
         //throw RuntimeException("Sync error")
         return query.singleResult as Int
     }

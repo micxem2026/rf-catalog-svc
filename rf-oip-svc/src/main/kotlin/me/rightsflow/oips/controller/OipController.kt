@@ -12,7 +12,6 @@ import me.rightsflow.common.entity.toCustomResponse
 import me.rightsflow.oips.dto.request.OipCreateRequest
 import me.rightsflow.oips.dto.request.OipUpdateRequest
 import me.rightsflow.oips.dto.response.OipDto
-import me.rightsflow.oips.dto.response.OipHierarchyDto
 import me.rightsflow.oips.entity.Oip
 import me.rightsflow.oips.service.OipService
 import org.springdoc.core.annotations.ParameterObject

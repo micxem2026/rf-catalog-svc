@@ -70,7 +70,7 @@ class OpenApiConfig {
                                         OAuthFlow()
                                             .tokenUrl("$protocol://$catalogHost/auth/oauth2/token")
                                             .refreshUrl("$protocol://$catalogHost/auth/oauth2/token")
-                                            .scopes(
+                                            /*.scopes(
                                                 Scopes()
                                                     .addString("read", "Чтение записей")
                                                     .addString("create", "Создание записей")
@@ -80,7 +80,7 @@ class OpenApiConfig {
                                                     .addString("admin", "Доступ администратора")
                                                     .addString("manager", "Доступ менеджера")
                                                     .addString("user", "Доступ пользователя")
-                                            )
+                                            )*/
                                     )
                             )
                     )

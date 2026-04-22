@@ -21,7 +21,7 @@ repositories {
     }
 }
 
-version = "1.0.6"
+version = "1.1.0"
 
 publishing {
     publications {
@@ -81,10 +81,21 @@ dependencies {
 
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web:${property("springBootVersion")}")
-
+    // Spring Boot Autoconfigure (для @AutoConfiguration, @ConfigurationProperties)
+    implementation("org.springframework.boot:spring-boot-autoconfigure:${property("springBootVersion")}")
+    // Spring Security (для AccessDeniedException, SecurityContextHolder)
+    implementation("org.springframework.boot:spring-boot-starter-security:${property("springBootVersion")}")
+    // Spring AOP (для @Aspect, @Around)
+    implementation("org.springframework.boot:spring-boot-starter-aop:${property("springBootVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:${property("springBootVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:${property("springBootVersion")}")
 
+    // Spring Kafka (чистый, без Cloud Stream)
+    implementation("org.springframework.kafka:spring-kafka:3.3.15")
+
+    // Jackson (для JsonDeserializer Kafka и PermissionInvalidatedEvent)
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.19.4")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.4")
 
     // Database
     implementation("org.postgresql:postgresql:42.7.7")
@@ -92,6 +103,10 @@ dependencies {
 
     // Swagger/OpenAPI
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui")
+
+    // Lombok для java
+    compileOnly("org.projectlombok:lombok:1.18.44")
+    annotationProcessor("org.projectlombok:lombok:1.18.44")
 
     // Fix vulnerability
     implementation("ch.qos.logback:logback-classic:1.5.19") {

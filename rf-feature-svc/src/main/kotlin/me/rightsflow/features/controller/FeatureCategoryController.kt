@@ -11,6 +11,7 @@ import me.rightsflow.common.config.ConflictResponse
 import me.rightsflow.common.config.InternalServerErrorResponse
 import me.rightsflow.common.config.NotFoundResponse
 import me.rightsflow.common.config.ValidationErrorResponse
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.features.dto.request.CreateFeatureCategoryRequest
 import me.rightsflow.features.dto.request.UpdateFeatureCategoryRequest
 import me.rightsflow.features.dto.response.FeatureCategoryResponse
@@ -33,7 +34,8 @@ class FeatureCategoryController(
 ) {
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    //@PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("ContractController:create_contract")
     @Operation(summary = "Получить категорию характеристик по ID")
     @ApiResponse(responseCode = "200", description = "Категория найдена")
     @CommonSecurityResponses

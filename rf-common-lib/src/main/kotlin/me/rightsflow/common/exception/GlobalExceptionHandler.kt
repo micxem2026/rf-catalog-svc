@@ -114,7 +114,20 @@ class GlobalExceptionHandler(
         return createErrorResponse(
             request = request,
             status = HttpStatus.FORBIDDEN,
-            message = HttpStatus.FORBIDDEN.reasonPhrase
+            message = ex.message ?: HttpStatus.FORBIDDEN.reasonPhrase
+        )
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException::class)
+    fun handleSpringSecurityAccessDeniedException(
+        ex: org.springframework.security.access.AccessDeniedException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        log.error("Access denied: ${ex.message}")
+        return createErrorResponse(
+            request = request,
+            status = HttpStatus.FORBIDDEN,
+            message = ex.message ?: HttpStatus.FORBIDDEN.reasonPhrase
         )
     }
 
