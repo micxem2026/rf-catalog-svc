@@ -33,16 +33,16 @@ class StreamProcessors(
             // Извлечение ключа из заголовков
             val keyString = message.headers["kafka_receivedMessageKey"]?.toString()
             if (keyString == null) {
-                log.warn("A tombstone message without a key was received. The message will be ignored.")
+                log.warn("userProcessor -> A tombstone message without a key was received. The message will be ignored.")
             }
             // Извлечение Acknowledgment из заголовков
             val acknowledgment = message.headers.get(KafkaHeaders.ACKNOWLEDGMENT, Acknowledgment::class.java)
             if (acknowledgment == null) {
-                log.warn("No Acknowledgment found in headers for message with id: $keyString")
+                log.warn("userProcessor -> No Acknowledgment found in headers for message with id: $keyString")
             }
             if (keyString != null) {
                 val syncId = keyString.substringAfter("=").substringBefore("}").trim().toInt()
-                log.info("Received sync message with id: $syncId")
+                log.info("userProcessor -> Received sync message with id: $syncId")
                 val userDto = when (message.payload) {
                     is GenericRecord -> MessageConverter.convertToUserAvroMessage(message.payload as GenericRecord)
                     is KafkaNull -> UserAvroMessage(null,"","","","",false,
@@ -51,7 +51,7 @@ class StreamProcessors(
                 }
                 replicationService.processUser(syncId, userDto)
                 acknowledgment?.acknowledge()
-                log.info("Successfully processed message with id: ${syncId}")
+                log.info("userProcessor -> Successfully processed message with id: ${syncId}")
             }
         }
     }

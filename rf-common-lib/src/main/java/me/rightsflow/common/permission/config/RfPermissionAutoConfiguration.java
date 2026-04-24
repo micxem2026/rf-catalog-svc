@@ -8,6 +8,7 @@ import me.rightsflow.common.permission.client.PermissionClientException;
 import me.rightsflow.common.permission.client.RestPermissionClient;
 import me.rightsflow.common.permission.kafka.PermissionInvalidationListener;
 import me.rightsflow.common.permission.event.PermissionInvalidatedEvent;
+import me.rightsflow.common.permission.registration.PermissionRegistrar;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -83,6 +85,19 @@ public class RfPermissionAutoConfiguration {
         }
 
         return cache;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(PermissionRegistrar.class)
+    public PermissionRegistrar permissionRegistrar(ApplicationContext applicationContext,
+                                                   PermissionClient permissionClient,
+                                                   PermissionProperties properties) {
+        return new PermissionRegistrar(
+                applicationContext,
+                permissionClient,
+                properties,
+                applicationName
+        );
     }
 
     @Bean

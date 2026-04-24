@@ -7,6 +7,7 @@ import jakarta.validation.Valid
 import me.rightsflow.common.config.*
 import me.rightsflow.common.entity.CustomPageResponse
 import me.rightsflow.common.entity.toCustomResponse
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.oips.dto.request.OipHierarchyCreateRequest
 import me.rightsflow.oips.dto.response.OipHierarchyDto
 import me.rightsflow.oips.service.OipHierarchyService
@@ -14,9 +15,7 @@ import org.springdoc.core.annotations.ParameterObject
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
-import org.springframework.data.web.PagedModel
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -27,7 +26,7 @@ class OipHierarchyController(
 ) {
     @GetMapping("/{id}")
     @Operation(summary = "Получить запись иерархии по ID")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OipHierarchyController:GetOipHierarchyById", description = "Получение записи иерархии ОИС по ID")
     @ApiResponse(responseCode = "200", description = "Запись найдена")
     @CommonSecurityResponses
     @NotFoundResponse
@@ -36,7 +35,7 @@ class OipHierarchyController(
 
     @GetMapping("/children")
     @Operation(summary = "Получить список подчинённых ОИС по заданному ID_PARENT")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OipHierarchyController:GetChildrenByParent", description = "Получение списка подчинённых ОИС по ID_PARENT")
     @ApiResponse(responseCode = "200", description = "Список ОИС получен")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -50,7 +49,7 @@ class OipHierarchyController(
 
     @GetMapping("/parents")
     @Operation(summary = "Получить список родителей ОИС по заданному ID_OIP")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OipHierarchyController:GetParentsByOip", description = "Получение списка родительских ОИС по ID_OIP")
     @ApiResponse(responseCode = "200", description = "Список ОИС получен")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -64,7 +63,7 @@ class OipHierarchyController(
 
     @PostMapping
     @Operation(summary = "Создать запись иерархии (ins_klf_oip_hierarchy)")
-    @PreAuthorize("hasAnyAuthority('SCOPE_create','SCOPE_manager')")
+    @RequiresPermission("OipHierarchyController:CreateOipHierarchy", description = "Создание записи иерархии ОИС")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponse(responseCode = "201", description = "Запись иерархии ОИС создана")
     @ValidationErrorResponse
@@ -75,7 +74,7 @@ class OipHierarchyController(
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить запись иерархии по заданному ID")
-    @PreAuthorize("hasAnyAuthority('SCOPE_delete','SCOPE_manager')")
+    @RequiresPermission("OipHierarchyController:DeleteOipHierarchy", description = "Удаление записи иерархии ОИС")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponse(responseCode = "204", description = "Запись иерархии ОИС удалена")
     @NotFoundResponse

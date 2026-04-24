@@ -3,6 +3,8 @@ package me.rightsflow.common.permission.client;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
 import me.rightsflow.common.permission.config.PermissionProperties;
+import me.rightsflow.common.permission.registration.PermissionRegistrationRequest;
+import me.rightsflow.common.permission.registration.PermissionRegistrationResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
@@ -94,6 +96,37 @@ public class RestPermissionClient implements PermissionClient {
         }
     }
 
+    @Override
+    public PermissionRegistrationResponse registerPermissions(PermissionRegistrationRequest request) {
+        String token = getOrRefreshToken();
+
+        log.info("Registering {} permission(s) for service '{}' at rf-auth-svc",
+                request.permissions().size(), request.service());
+
+        try {
+            PermissionRegistrationResponse response = restClient.post()
+                    .uri("/api/permissions/register-batch")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(request)
+                    .retrieve()
+                    .body(PermissionRegistrationResponse.class); // ← читаем тело
+
+            if (response == null) {
+                log.warn("Empty response from rf-auth-svc on register-batch, " +
+                         "returning stub for service '{}'", request.service());
+                return new PermissionRegistrationResponse(
+                        request.service(), request.permissions().size(), 0, 0,0);
+            }
+
+            log.debug("Batch registration accepted by rf-auth-svc: {}", response);
+            return response;
+
+        } catch (RestClientException e) {
+            throw new PermissionClientException("Failed to register permissions at rf-auth-svc: " + e.getMessage(), e);
+        }
+    }
+
     /**
      * Возвращает действующий access token, при необходимости обновляет его.
      */
@@ -113,8 +146,6 @@ public class RestPermissionClient implements PermissionClient {
         }
 
         log.debug("Requesting new OAuth2 token from rf-auth-svc");
-        log.debug("System client secret: {}", properties.getSystemClientSecret());
-        log.debug("System client ID: {}", properties.getSystemClientId());
 
         MultiValueMap<String, String> formParams = new LinkedMultiValueMap<>();
         formParams.add("grant_type", "client_credentials");

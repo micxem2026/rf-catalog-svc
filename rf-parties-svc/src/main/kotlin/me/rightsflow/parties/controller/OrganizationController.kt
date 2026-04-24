@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import me.rightsflow.common.config.*
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.parties.dto.request.OrganizationCreateRequest
 import me.rightsflow.parties.dto.request.OrganizationUpdateRequest
 import me.rightsflow.parties.dto.response.OrganizationDto
@@ -26,7 +27,7 @@ class OrganizationController(
 ) {
     @GetMapping("/{id}")
     @Operation(summary = "Получить организацию по ID")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OrganizationController:GetOrganizationById", description = "Получить организацию по ID")
     @ApiResponse(responseCode = "200", description = "Организация найдена")
     @CommonSecurityResponses
     @NotFoundResponse
@@ -35,7 +36,7 @@ class OrganizationController(
 
     @GetMapping
     @Operation(summary = "Поиск организаций по фильтру названия и guid (с пагинацией)")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OrganizationController:FindAllOrganizationsByFilter", description = "Поиск организаций по фильтру (с пагинацией)")
     @ApiResponse(responseCode = "200", description = "Список организаций получен")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -49,7 +50,7 @@ class OrganizationController(
 
     @PostMapping
     @Operation(summary = "Создать новою организацию")
-    @PreAuthorize("hasAnyAuthority('SCOPE_create','SCOPE_manager')")
+    @RequiresPermission("OrganizationController:CreateOrganization", description = "Создать организацию")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponse(responseCode = "201", description = "Организация создана")
     @ValidationErrorResponse
@@ -60,7 +61,7 @@ class OrganizationController(
 
     @PutMapping("/{id}")
     @Operation(summary = "Изменить организацию по заданному ID")
-    @PreAuthorize("hasAnyAuthority('SCOPE_update','SCOPE_manager')")
+    @RequiresPermission("OrganizationController:UpdateOrganization", description = "Изменить организацию")
     @ApiResponse(responseCode = "200", description = "Организация обновлена")
     @ValidationErrorResponse
     @NotFoundResponse
@@ -72,7 +73,7 @@ class OrganizationController(
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить организацию по заданному ID")
-    @PreAuthorize("hasAnyAuthority('SCOPE_delete','SCOPE_manager')")
+    @RequiresPermission("OrganizationController:DeleteOrganization", description = "Удалить организацию")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponse(responseCode = "204", description = "Организация удалена")
     @NotFoundResponse

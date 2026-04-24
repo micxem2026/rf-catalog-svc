@@ -27,7 +27,7 @@ class AclBulkLoadController(
 
     @PostMapping("/bulk-load-oip-hierarchy/prepare")
     @Operation(summary = "Подготовка таблицы KLF_OIP_HIERARCHY к массовой загрузке данных")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Подготовка таблицы KLF_OIP_HIERARCHY выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -48,7 +48,7 @@ class AclBulkLoadController(
 
     @PostMapping("/bulk-load-oip-hierarchy/finalize")
     @Operation(summary = "Финальная обработка таблицы KLF_OIP_HIERARCHY после массовой загрузки данных")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Финальная обработка таблицы KLF_OIP_HIERARCHY выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -69,7 +69,7 @@ class AclBulkLoadController(
 
     @GetMapping("/bulk-load/task/{taskId}")
     @Operation(summary = "Получение статуса асинхронной задачи")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Статус асинхронной задачи получен")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -95,7 +95,7 @@ class AclBulkLoadController(
      */
     @PostMapping("/bulk-load-oip-hierarchy/rollback")
     @Operation(summary = "Аварийное включение триггеров")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Триггеры включены (аварийно)")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -107,7 +107,7 @@ class AclBulkLoadController(
      */
     @GetMapping("/bulk-load-oip-hierarchy/trigger-status")
     @Operation(summary = "Проверка статуса триггеров")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Статус триггеров получен")
     @CommonSecurityResponses
     @InternalServerErrorResponse

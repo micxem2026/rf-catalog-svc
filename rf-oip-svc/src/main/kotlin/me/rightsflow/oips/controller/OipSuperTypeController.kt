@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import me.rightsflow.common.config.CommonSecurityResponses
 import me.rightsflow.common.config.InternalServerErrorResponse
 import me.rightsflow.common.config.NotFoundResponse
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.oips.dto.response.OipSuperTypeDto
 import me.rightsflow.oips.service.OipSuperTypeService
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -22,7 +22,7 @@ class OipSuperTypeController(
 ) {
     @GetMapping("/{id}")
     @Operation(summary = "Получить вид ОИС по ID")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OipSuperTypeController:GetOipSuperTypeById", description = "Получение вида ОИС по ID")
     @ApiResponse(responseCode = "200", description = "Запись найдена")
     @CommonSecurityResponses
     @NotFoundResponse
@@ -31,7 +31,7 @@ class OipSuperTypeController(
 
     @GetMapping
     @Operation(summary = "Получить список всех видов ОИС")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OipSuperTypeController:GetAllOipSuperTypes", description = "Получение списка всех видов ОИС")
     @ApiResponse(responseCode = "200", description = "Список всех видов ОИС получен")
     @CommonSecurityResponses
     @InternalServerErrorResponse

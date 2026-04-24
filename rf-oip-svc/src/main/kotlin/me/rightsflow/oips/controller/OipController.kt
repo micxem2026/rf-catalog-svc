@@ -9,6 +9,7 @@ import jakarta.validation.Valid
 import me.rightsflow.common.config.*
 import me.rightsflow.common.entity.CustomPageResponse
 import me.rightsflow.common.entity.toCustomResponse
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.oips.dto.request.OipCreateRequest
 import me.rightsflow.oips.dto.request.OipUpdateRequest
 import me.rightsflow.oips.dto.response.OipDto
@@ -19,7 +20,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -30,7 +30,7 @@ class OipController(
 ) {
     @GetMapping("/{id}")
     @Operation(summary = "Получить ОИС по ID")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OipController:GetOipById", description = "Получение ОИС по ID")
     @ApiResponse(responseCode = "200", description = "ОИС найден")
     @CommonSecurityResponses
     @NotFoundResponse
@@ -39,7 +39,7 @@ class OipController(
 
     @GetMapping
     @Operation(summary = "Поиск ОИС по фильтрам (с пагинацией)")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OipController:FindAllOipsByFilter", description = "Поиск ОИС по фильтрам (с пагинацией)")
     @ApiResponse(responseCode = "200", description = "Список ОИС получен")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -76,7 +76,7 @@ class OipController(
             чтобы сохранить целостность дерева связей.
         """
     )
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OipController:GetAllOipHierarchy", description = "Получение полной иерархии заданного ОИС")
     @ApiResponse(responseCode = "200", description = "Список всех ОИС из иерархии получен")
     @CommonSecurityResponses
     @NotFoundResponse
@@ -100,7 +100,7 @@ class OipController(
 
     @GetMapping("/{id}/children")
     @Operation(summary = "Получить список подчинённых ОИС по заданному ID ОИС родителя")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("OipController:GetOipChildren", description = "Получение подчинённых ОИС по ID ОИС родителя")
     @ApiResponse(responseCode = "200", description = "Список ОИС получен")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -115,7 +115,7 @@ class OipController(
 
     @PostMapping
     @Operation(summary = "Создать новый ОИС")
-    @PreAuthorize("hasAnyAuthority('SCOPE_create','SCOPE_manager')")
+    @RequiresPermission("OipController:CreateOip", description = "Создание ОИС")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponse(responseCode = "201", description = "ОИС создан")
     @ValidationErrorResponse
@@ -126,7 +126,7 @@ class OipController(
 
     @PutMapping("/{id}")
     @Operation(summary = "Изменить ОИС по заданному ID")
-    @PreAuthorize("hasAnyAuthority('SCOPE_update','SCOPE_manager')")
+    @RequiresPermission("OipController:UpdateOip", description = "Изменение ОИС")
     @ApiResponse(responseCode = "200", description = "ОИС обновлён")
     @ValidationErrorResponse
     @NotFoundResponse
@@ -137,7 +137,7 @@ class OipController(
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить ОИС по заданному ID")
-    @PreAuthorize("hasAnyAuthority('SCOPE_delete','SCOPE_manager')")
+    @RequiresPermission("OipController:DeleteOip", description = "Удаление ОИС")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponse(responseCode = "204", description = "ОИС удалён")
     @NotFoundResponse

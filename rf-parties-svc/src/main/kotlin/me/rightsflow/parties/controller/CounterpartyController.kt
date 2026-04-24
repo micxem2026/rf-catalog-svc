@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import me.rightsflow.common.config.*
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.parties.dto.request.CounterpartyCreateRequest
 import me.rightsflow.parties.dto.request.CounterpartyUpdateRequest
 import me.rightsflow.parties.dto.response.CounterpartyDto
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.data.web.PagedModel
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -26,7 +26,7 @@ class CounterpartyController(
 ) {
     @GetMapping("/{id}")
     @Operation(summary = "Получить контрагента по ID")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("CounterpartyController:GetCounterpartyById", description = "Получить контрагента по ID")
     @ApiResponse(responseCode = "200", description = "Контрагент найден")
     @CommonSecurityResponses
     @NotFoundResponse
@@ -35,7 +35,7 @@ class CounterpartyController(
 
     @GetMapping
     @Operation(summary = "Поиск контрагентов по фильтру названия и guid (с пагинацией)")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("CounterpartyController:FindAllCounterpartiesByFilter", description = "Поиск контрагентов по фильтру (с пагинацией)")
     @ApiResponse(responseCode = "200", description = "Список контрагентов получен")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -49,7 +49,7 @@ class CounterpartyController(
 
     @PostMapping
     @Operation(summary = "Создать нового контрагента")
-    @PreAuthorize("hasAnyAuthority('SCOPE_create','SCOPE_manager')")
+    @RequiresPermission("CounterpartyController:CreateCounterparty", description = "Создать контрагента")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponse(responseCode = "201", description = "Контрагент создан")
     @ValidationErrorResponse
@@ -60,7 +60,7 @@ class CounterpartyController(
 
     @PutMapping("/{id}")
     @Operation(summary = "Изменить контрагента по заданному ID")
-    @PreAuthorize("hasAnyAuthority('SCOPE_update','SCOPE_manager')")
+    @RequiresPermission("CounterpartyController:UpdateCounterparty", description = "Изменить контрагента")
     @ApiResponse(responseCode = "200", description = "Контрагент обновлён")
     @ValidationErrorResponse
     @NotFoundResponse
@@ -72,7 +72,7 @@ class CounterpartyController(
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить контрагента по заданному ID")
-    @PreAuthorize("hasAnyAuthority('SCOPE_delete','SCOPE_manager')")
+    @RequiresPermission("CounterpartyController:DeleteCounterparty", description = "Удалить контрагента")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponse(responseCode = "204", description = "Контрагент удалён")
     @NotFoundResponse

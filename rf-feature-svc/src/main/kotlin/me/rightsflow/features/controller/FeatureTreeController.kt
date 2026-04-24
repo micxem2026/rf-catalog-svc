@@ -3,20 +3,15 @@ package me.rightsflow.features.controller
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import me.rightsflow.common.config.CommonSecurityResponses
-import me.rightsflow.common.config.ConflictResponse
-import me.rightsflow.common.config.InternalServerErrorResponse
-import me.rightsflow.common.config.NotFoundResponse
-import me.rightsflow.common.config.ValidationErrorResponse
+import me.rightsflow.common.config.*
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.features.dto.request.CreateFeatureTreeRequest
 import me.rightsflow.features.dto.request.UpdateFeatureTreeRequest
 import me.rightsflow.features.dto.response.FeatureTreeProjection
 import me.rightsflow.features.service.FeatureTreeService
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 
@@ -28,7 +23,7 @@ class FeatureTreeController(
 ) {
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("FeatureTreeController:GetFeatureTreeById", description = "Получение характеристики из дерева по ID")
     @Operation(summary = "Получить характеристику из дерева по ID")
     @ApiResponse(responseCode = "200", description = "Характеристика найдена")
     @CommonSecurityResponses
@@ -40,7 +35,7 @@ class FeatureTreeController(
     }
 
     @GetMapping("/category/{categoryId}")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("FeatureTreeController:GetFeatureTreeByCategoryId", description = "Получение дерева характеристик по категории")
     @Operation(summary = "Получить дерево характеристик по категории")
     @ApiResponse(responseCode = "200", description = "Дерево получено")
     @ValidationErrorResponse
@@ -56,7 +51,7 @@ class FeatureTreeController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('SCOPE_create') or hasAuthority('SCOPE_manager')")
+    @RequiresPermission("FeatureTreeController:CreateFeatureTree", description = "Создание характеристики в дереве характеристик")
     @Operation(summary = "Создать новую характеристику в дереве")
     @ApiResponse(responseCode = "201", description = "Характеристика создана")
     @ValidationErrorResponse
@@ -72,7 +67,7 @@ class FeatureTreeController(
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_update') or hasAuthority('SCOPE_manager')")
+    @RequiresPermission("FeatureTreeController:UpdateFeatureTree", description = "Обновление характеристики в дереве")
     @Operation(summary = "Обновить характеристику в дереве")
     @ApiResponse(responseCode = "200", description = "Характеристика обновлена")
     @ValidationErrorResponse
@@ -91,7 +86,7 @@ class FeatureTreeController(
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('SCOPE_delete') or hasAuthority('SCOPE_manager')")
+    @RequiresPermission("FeatureTreeController:DeleteFeatureTree", description = "Удаление характеристики из дерева")
     @Operation(summary = "Удалить характеристику из дерева")
     @ApiResponse(responseCode = "204", description = "Характеристика удалена")
     @NotFoundResponse

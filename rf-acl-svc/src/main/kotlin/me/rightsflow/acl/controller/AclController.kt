@@ -30,7 +30,7 @@ class AclController(
 
     @PostMapping("/syncKlfRightType")
     @Operation(summary = "Синхронизация таблицы KLF_RIGHT_TYPE")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Синхронизация KLF_RIGHT_TYPE выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -38,7 +38,7 @@ class AclController(
 
     @PostMapping("/syncKlfFeaturePlain")
     @Operation(summary = "Синхронизация таблицы KLF_FEATURE_PLAIN")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Синхронизация KLF_FEATURE_PLAIN выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -46,7 +46,7 @@ class AclController(
 
     @PostMapping("/syncKlfFeatureTree")
     @Operation(summary = "Синхронизация таблицы KLF_FEATURE_TREE")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Синхронизация KLF_FEATURE_TREE выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -54,7 +54,7 @@ class AclController(
 
     @PostMapping("/syncLovOipType")
     @Operation(summary = "Синхронизация таблицы LOV_OIP_TYPE")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Синхронизация LOV_OIP_TYPE выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -62,7 +62,7 @@ class AclController(
 
     @PostMapping("/syncKlfOip")
     @Operation(summary = "Синхронизация таблицы KLF_OIP")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Синхронизация KLF_OIP выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -70,7 +70,7 @@ class AclController(
 
     @PostMapping("/syncKlfOipHierarchy")
     @Operation(summary = "Синхронизация таблицы KLF_OIP_HIERARCHY")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Синхронизация KLF_OIP_HIERARCHY выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -78,7 +78,7 @@ class AclController(
 
     @PostMapping("/syncKlfOrganization")
     @Operation(summary = "Синхронизация таблицы KLF_ORGANIZATION")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Синхронизация KLF_ORGANIZATION выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse
@@ -86,7 +86,7 @@ class AclController(
 
     @PostMapping("/syncKlfCounterparty")
     @Operation(summary = "Синхронизация таблицы KLF_COUNTERPARTY")
-    @PreAuthorize("hasAnyAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('SERVICE')")
     @ApiResponse(responseCode = "200", description = "Синхронизация KLF_COUNTERPARTY выполнена")
     @CommonSecurityResponses
     @InternalServerErrorResponse

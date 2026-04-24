@@ -3,14 +3,9 @@ package me.rightsflow.features.controller
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import me.rightsflow.common.config.CommonSecurityResponses
-import me.rightsflow.common.config.ConflictResponse
-import me.rightsflow.common.config.InternalServerErrorResponse
-import me.rightsflow.common.config.NotFoundResponse
-import me.rightsflow.common.config.ValidationErrorResponse
+import me.rightsflow.common.config.*
 import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.features.dto.request.CreateFeatureCategoryRequest
 import me.rightsflow.features.dto.request.UpdateFeatureCategoryRequest
@@ -22,7 +17,6 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.data.web.PagedModel
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 
@@ -34,8 +28,7 @@ class FeatureCategoryController(
 ) {
 
     @GetMapping("/{id}")
-    //@PreAuthorize("hasAuthority('SCOPE_user')")
-    @RequiresPermission("ContractController:create_contract")
+    @RequiresPermission("FeatureCategoryController:GetFeatureCategoryById", description = "Получение категории характеристики по ID")
     @Operation(summary = "Получить категорию характеристик по ID")
     @ApiResponse(responseCode = "200", description = "Категория найдена")
     @CommonSecurityResponses
@@ -48,7 +41,7 @@ class FeatureCategoryController(
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("FeatureCategoryController:GetAllFeatureCategories", description = "Получение списка категорий характеристик")
     @Operation(summary = "Получить список категорий характеристик")
     @ApiResponse(responseCode = "200", description = "Список категорий получен")
     @CommonSecurityResponses
@@ -61,7 +54,7 @@ class FeatureCategoryController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('SCOPE_create') or hasAuthority('SCOPE_manager')")
+    @RequiresPermission("FeatureCategoryController:CreateFeatureCategory", description = "Создание новой категории характеристик")
     @Operation(summary = "Создать новую категорию характеристик")
     @ApiResponse(responseCode = "201", description = "Категория создана")
     @ValidationErrorResponse
@@ -76,7 +69,7 @@ class FeatureCategoryController(
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_update') or hasAuthority('SCOPE_manager')")
+    @RequiresPermission("FeatureCategoryController:UpdateFeatureCategory", description = "Обновление категории характеристик")
     @Operation(summary = "Обновить категорию характеристик")
     @ApiResponse(responseCode = "200", description = "Категория обновлена")
     @ValidationErrorResponse
@@ -94,7 +87,7 @@ class FeatureCategoryController(
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('SCOPE_delete') or hasAuthority('SCOPE_manager')")
+    @RequiresPermission("FeatureCategoryController:DeleteFeatureCategory", description = "Удаление категории характеристик")
     @Operation(summary = "Удалить категорию характеристик")
     @ApiResponse(responseCode = "204", description = "Категория удалена")
     @NotFoundResponse

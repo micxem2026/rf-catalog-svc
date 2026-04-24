@@ -1,5 +1,8 @@
 package me.rightsflow.common.permission.client;
 
+import me.rightsflow.common.permission.registration.PermissionRegistrationRequest;
+import me.rightsflow.common.permission.registration.PermissionRegistrationResponse;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -23,4 +26,16 @@ public interface PermissionClient {
      *         Если rf-auth-svc недоступен — выбрасывается исключение.
      */
     Map<String, Set<String>> fetchPermissionsForRoles(Set<String> roleNames);
+
+    /**
+     * Batch upsert прав в rf-auth-svc.
+     * Вызывается из {@link me.rightsflow.common.permission.registration.PermissionRegistrar}
+     * при старте микросервиса.
+     *
+     * <p>Операция идемпотентна: уже существующие права не дублируются.</p>
+     *
+     * @param request список прав для регистрации с именем сервиса
+     * @throws PermissionClientException если rf-auth-svc недоступен
+     */
+    PermissionRegistrationResponse registerPermissions(PermissionRegistrationRequest request);
 }

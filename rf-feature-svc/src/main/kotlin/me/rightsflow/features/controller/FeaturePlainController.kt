@@ -3,14 +3,10 @@ package me.rightsflow.features.controller
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import me.rightsflow.common.config.CommonSecurityResponses
-import me.rightsflow.common.config.ConflictResponse
-import me.rightsflow.common.config.InternalServerErrorResponse
-import me.rightsflow.common.config.NotFoundResponse
-import me.rightsflow.common.config.ValidationErrorResponse
+import me.rightsflow.common.config.*
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.features.dto.request.CreateFeaturePlainRequest
 import me.rightsflow.features.dto.request.UpdateFeaturePlainRequest
 import me.rightsflow.features.dto.response.FeaturePlainResponse
@@ -21,7 +17,6 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.data.web.PagedModel
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 
@@ -33,7 +28,7 @@ class FeaturePlainController(
 ) {
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("FeaturePlainController:GetFeaturePlainById", description = "Получение простой характеристики по ID")
     @Operation(summary = "Получить простую характеристику по ID")
     @ApiResponse(responseCode = "200", description = "Характеристика найдена")
     @NotFoundResponse
@@ -46,7 +41,7 @@ class FeaturePlainController(
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("FeaturePlainController:GetAllPlainFeatures", description = "Получение списка простых характеристик")
     @Operation(summary = "Получить список простых характеристик")
     @ApiResponse(responseCode = "200", description = "Список характеристик получен")
     @CommonSecurityResponses
@@ -61,7 +56,7 @@ class FeaturePlainController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('SCOPE_create') or hasAuthority('SCOPE_manager')")
+    @RequiresPermission("FeaturePlainController:CreatePlainFeature", description = "Создание простой характеристики")
     @Operation(summary = "Создать новую простую характеристику")
     @ApiResponse(responseCode = "201", description = "Характеристика создана")
     @CommonSecurityResponses
@@ -76,7 +71,7 @@ class FeaturePlainController(
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_update') or hasAuthority('SCOPE_manager')")
+    @RequiresPermission("FeaturePlainController:UpdatePlainFeature", description = "Обновление простой характеристики")
     @Operation(summary = "Обновить простую характеристику")
     @ApiResponse(responseCode = "200", description = "Характеристика обновлена")
     @ValidationErrorResponse
@@ -94,7 +89,7 @@ class FeaturePlainController(
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('SCOPE_delete') or hasAuthority('SCOPE_manager')")
+    @RequiresPermission("FeaturePlainController:DeletePlainFeature", description = "Удаление простой характеристики")
     @Operation(summary = "Удалить простую характеристику")
     @ApiResponse(responseCode = "204", description = "Характеристика удалена")
     @NotFoundResponse

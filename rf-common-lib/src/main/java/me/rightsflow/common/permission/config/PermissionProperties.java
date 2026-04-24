@@ -94,6 +94,31 @@ public class PermissionProperties {
         return systemClient.getScope();
     }
 
+    private Registration registration = new Registration();
+
+    @Getter
+    @Setter
+    public static class Registration {
+
+        /**
+         * Включить авто-регистрацию прав при старте приложения.
+         * По умолчанию: true.
+         */
+        private boolean enabled = true;
+
+        /**
+         * Количество попыток регистрации при недоступности rf-auth-svc.
+         * По умолчанию: 3.
+         */
+        private int retryAttempts = 3;
+
+        /**
+         * Пауза между попытками.
+         * По умолчанию: 2 секунды.
+         */
+        private Duration retryDelay = Duration.ofSeconds(2);
+    }
+
     public enum StartupMode {
         FAIL, WARN
     }

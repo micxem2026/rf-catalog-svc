@@ -11,6 +11,7 @@ import me.rightsflow.common.config.ConflictResponse
 import me.rightsflow.common.config.InternalServerErrorResponse
 import me.rightsflow.common.config.NotFoundResponse
 import me.rightsflow.common.config.ValidationErrorResponse
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.righttypes.dto.request.RightTypeCreateRequest
 import me.rightsflow.righttypes.dto.request.RightTypeUpdateRequest
 import me.rightsflow.righttypes.dto.response.RightTypeResponse
@@ -19,18 +20,16 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
-@Tag(name = "Right Types", description = "Справочник типов прав")
 @RestController
 @RequestMapping("/righttypes")
-@SecurityRequirement(name = "bearerAuth")
-@SecurityRequirement(name = "oauth2", scopes = ["read", "create", "update", "delete", "execute", "admin", "user", "manager"])
+@Tag(name = "Right Types", description = "Справочник типов прав")
 class RightTypeController(
     private val service: RightTypeService
 ) {
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить тип права по ID")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("RightTypeController:GetRightTypeById", description = "Получение типа права по ID")
     @ApiResponse(responseCode = "200", description = "Запись найдена")
     @CommonSecurityResponses
     @NotFoundResponse
@@ -42,7 +41,7 @@ class RightTypeController(
         summary = "Получить дерево типов прав",
         description = "tree_mode: recursive — вложенные children; plain — плоский список с полем level (корень level=1)"
     )
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("RightTypeController:GetRightTypeTree", description = "Получение дерева типов прав")
     @ApiResponse(responseCode = "200", description = "Дерево получено")
     @ValidationErrorResponse
     @CommonSecurityResponses
@@ -55,7 +54,7 @@ class RightTypeController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Создать тип права")
-    @PreAuthorize("hasAnyAuthority('SCOPE_create','SCOPE_manager')")
+    @RequiresPermission("RightTypeController:CreateRightType", description = "Создание типа права")
     @ApiResponse(responseCode = "201", description = "Тип права создан")
     @ValidationErrorResponse
     @ConflictResponse
@@ -66,7 +65,7 @@ class RightTypeController(
 
     @PutMapping("/{id}")
     @Operation(summary = "Изменить тип права по ID")
-    @PreAuthorize("hasAnyAuthority('SCOPE_update','SCOPE_manager')")
+    @RequiresPermission("RightTypeController:UpdateRightType", description = "Изменение типа права")
     @ApiResponse(responseCode = "200", description = "Характеристика обновлена")
     @ValidationErrorResponse
     @CommonSecurityResponses
@@ -79,7 +78,7 @@ class RightTypeController(
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Удалить тип права по ID")
-    @PreAuthorize("hasAnyAuthority('SCOPE_delete','SCOPE_manager')")
+    @RequiresPermission("RightTypeController:DeleteRightType", description = "Удаление типа права")
     @ApiResponse(responseCode = "204", description = "Характеристика удалена")
     @NotFoundResponse
     @ConflictResponse

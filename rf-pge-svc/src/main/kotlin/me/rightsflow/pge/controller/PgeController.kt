@@ -8,12 +8,12 @@ import jakarta.validation.Valid
 import me.rightsflow.common.config.CommonSecurityResponses
 import me.rightsflow.common.config.InternalServerErrorResponse
 import me.rightsflow.common.config.ValidationErrorResponse
+import me.rightsflow.common.permission.annotation.RequiresPermission
 import me.rightsflow.pge.dto.PropertyDataDto
 import me.rightsflow.pge.dto.PropertyGroupDto
 import me.rightsflow.pge.dto.PropertyUpdateBatchRequest
 import me.rightsflow.pge.dto.PropertyUpdateRequest
 import me.rightsflow.pge.service.PgeService
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -24,7 +24,7 @@ class PgeController(
 ) {
     @GetMapping("/{objId}")
     @Operation(summary = "Получить список групп свойств привязанных к объекту по его ID")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("PgeController:GetPropertyGroupsByObjId", description = "Получить список групп свойств для объекта")
     @ApiResponse(responseCode = "200", description = "Список групп свойств получен")
     //@NotFoundResponse
     @CommonSecurityResponses
@@ -33,7 +33,7 @@ class PgeController(
 
     @GetMapping("/data")
     @Operation(summary = "Получить данные для заданной группы свойств и списка сущностей")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("PgeController:GetPropertyGroupData", description = "Получить данные для группы свойств")
     @ApiResponse(responseCode = "200", description = "Данные для группы свойств получены")
     //@NotFoundResponse
     @CommonSecurityResponses
@@ -47,7 +47,7 @@ class PgeController(
 
     @GetMapping("/property")
     @Operation(summary = "Получить данные конкретного свойства")
-    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @RequiresPermission("PgeController:GetPropertyData", description = "Получить данные конкретного свойства")
     @ApiResponse(responseCode = "200", description = "Данные конкретного свойства получены")
     //@NotFoundResponse
     @CommonSecurityResponses
@@ -63,7 +63,7 @@ class PgeController(
 
     @PutMapping("/property")
     @Operation(summary = "Обновить данные конкретного свойства")
-    @PreAuthorize("hasAnyAuthority('SCOPE_update','SCOPE_manager')")
+    @RequiresPermission("PgeController:UpdatePropertyData", description = "Обновить данные конкретного свойства")
     @ApiResponse(responseCode = "200", description = "Данные конкретного свойства обновлены")
     @ValidationErrorResponse
     @CommonSecurityResponses
@@ -72,7 +72,7 @@ class PgeController(
 
     @PutMapping("/property/batch")
     @Operation(summary = "Обновить данные нескольких свойств")
-    @PreAuthorize("hasAnyAuthority('SCOPE_update','SCOPE_manager')")
+    @RequiresPermission("PgeController:BatchUpdatePropertyData", description = "Обновить данные нескольких свойств")
     @ApiResponse(responseCode = "200", description = "Данные свойств обновлены")
     @ValidationErrorResponse
     @CommonSecurityResponses

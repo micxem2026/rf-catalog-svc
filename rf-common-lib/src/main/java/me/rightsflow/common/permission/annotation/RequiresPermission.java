@@ -29,6 +29,13 @@ public @interface RequiresPermission {
     String value();
 
     /**
+     * Описание права.
+     * Если не задано — генерируется автоматически при регистрации.
+     * Пример: {@code "Создание нового контракта"}
+     */
+    String description() default "";
+
+    /**
      * Если {@code true} (по умолчанию) — при отсутствии права
      * выбрасывается {@link org.springframework.security.access.AccessDeniedException},
      * что приводит к ответу HTTP 403.
