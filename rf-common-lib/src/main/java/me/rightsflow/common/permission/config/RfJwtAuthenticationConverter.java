@@ -43,7 +43,7 @@ public class RfJwtAuthenticationConverter implements Converter<Jwt, Collection<G
             authorities.add(new SimpleGrantedAuthority(authority));
         }
 
-        log.debug("JWT roles claim {} -> authorities {}", roles, authorities);
+        log.trace("JWT roles claim {} -> authorities {}", roles, authorities);
         return authorities;
     }
 }

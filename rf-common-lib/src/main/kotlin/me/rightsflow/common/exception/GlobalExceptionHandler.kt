@@ -134,13 +134,24 @@ class GlobalExceptionHandler(
     @ExceptionHandler(Throwable::class)
     fun handleOther(ex: Throwable, req: WebRequest): ResponseEntity<ErrorResponse> {
         log.error("Unexpected error: ${ex.message}", ex)
-        // Спец случай: sqlstate 20101, 20102
+
         SqlStateExtractor.extractSqlState(ex)?.let { state ->
-            val intState = state.first.toIntOrNull()
+            val sqlState = state.first
+            val message  = state.second
+
+            // SQLSTATE 42501 — insufficient_privilege (PostgreSQL стандарт)
+            // Бросается из pkg_contract.check_contract_org_access при отказе в доступе
+            if (sqlState == "42501") {
+                log.warn("Org access denied for user '{}': {}", securitySubjectProvider.currentSub(), message)
+                return createErrorResponse(req, HttpStatus.FORBIDDEN, message)
+            }
+
+            val intState = sqlState.toIntOrNull()
             if (((intState ?: 0) in 20100..20200) || (intState ?: 0) == 23505 || (intState ?: 0) == 23503) {
-                return createErrorResponse(req, HttpStatus.CONFLICT, "${state.second}, SQL State: ${state.first}")
+                return createErrorResponse(req, HttpStatus.CONFLICT, "$message, SQL State: $sqlState")
             }
         }
+
         return createErrorResponse(req, HttpStatus.INTERNAL_SERVER_ERROR, ex.message ?: "Internal error")
     }
 
