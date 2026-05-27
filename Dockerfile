@@ -32,13 +32,15 @@ RUN echo "timeout=180" >> /etc/dnf/dnf.conf && \
     echo "retries=10" >> /etc/dnf/dnf.conf && \
     dnf clean all && \
     for i in 1 2 3 4 5; do \
-      dnf install -y findutils && break || \
+      dnf install -y findutils java-17-amazon-corretto-devel && break || \
       (echo "Attempt $i failed, retrying in 10 seconds..." && sleep 10); \
     done
 
 # Объявляем аргумент, который мы будем получать из команды docker build
 ARG CI_JOB_TOKEN
 ARG GITLAB_CACHE_REG_URL
+
+RUN java -version && javac -version
 
 # Собираем проект
 RUN chmod +x ./gradlew && ./gradlew --no-daemon assemble -Pgitlab.registry.token=$CI_JOB_TOKEN -Pgitlab.cache.registry.url=$GITLAB_CACHE_REG_URL
