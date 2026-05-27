@@ -111,6 +111,11 @@ spec:
                 secretKeyRef:
                   name: rf-catalog-secret
                   key: swagger-secret
+            - name: RF_SYSTEM_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: rf-auth-secret
+                  key: system-client-secret
             - name: RF_KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
