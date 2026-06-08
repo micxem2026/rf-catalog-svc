@@ -91,9 +91,7 @@ data class KlfOipRequest(
     val name: String,
 
     val nativeName: String?,
-
     val fullName: String?,
-
     val releaseYear: String?,
 
     @field:NotNull
@@ -103,8 +101,8 @@ data class KlfOipRequest(
     var partCount: Int,
 
     val duration: String?,
-
     val description: String?,
+    val idAgeMarker: Int?,
 
     @field:NotNull
     var hasChildren: Boolean,

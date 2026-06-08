@@ -127,7 +127,7 @@ class AclSyncService(
             throw ConstraintException(pod.id, Oip::class.java)
         }
 
-        val sql = "SELECT * FROM pkg_acl.sync_klf_oip(:pId, :pGuid, :pIdOipSuperType, :pIdOipType, :pName, :pNativeName, :pFullName, :pReleaseYear, :pPartNum, :pPartCount, :pDuration, :pDescription, :pHasChildren, :pHasParent, :pChildrenCount, :pRootId, :pDropFlag)"
+        val sql = "SELECT * FROM pkg_acl.sync_klf_oip(:pId, :pGuid, :pIdOipSuperType, :pIdOipType, :pName, :pNativeName, :pFullName, :pReleaseYear, :pPartNum, :pPartCount, :pDuration, :pDescription, :pIdAgeMarker, :pHasChildren, :pHasParent, :pChildrenCount, :pRootId, :pDropFlag)"
         val result = entityManager.createNativeQuery(sql)
             .setParameter("pId", pod.id)
             .setParameter("pGuid", pod.guid)
@@ -141,11 +141,28 @@ class AclSyncService(
             .setParameter("pPartCount", pod.partCount)
             .setParameter("pDuration", pod.duration)
             .setParameter("pDescription", pod.description)
+            .setParameter("pIdAgeMarker", pod.idAgeMarker)
             .setParameter("pHasChildren", pod.hasChildren)
             .setParameter("pHasParent", pod.hasParent)
             .setParameter("pChildrenCount", pod.childrenCount)
             .setParameter("pRootId", pod.rootId)
             .setParameter("pDropFlag", pod.dropFlag)
+            .singleResult
+
+        return when (result) {
+            is Number -> result.toInt()
+            else -> null
+        }
+    }
+
+    @Transactional
+    fun syncKlfOipProperties(
+        propsJson: String
+    ): Int? {
+
+        val sql = "SELECT * FROM pkg_acl.sync_klf_oip_properties(:pPropsJson)"
+        val result = entityManager.createNativeQuery(sql)
+            .setParameter("pPropsJson", propsJson)
             .singleResult
 
         return when (result) {

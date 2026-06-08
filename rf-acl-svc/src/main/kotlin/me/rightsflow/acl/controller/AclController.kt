@@ -68,6 +68,14 @@ class AclController(
     @InternalServerErrorResponse
     fun syncKlfOip(@Valid @RequestBody req: KlfOipRequest): Int? = service.syncKlfOip(req)
 
+    @PostMapping("/syncKlfOipProperties")
+    @Operation(summary = "Синхронизация свойств ОИС")
+    @PreAuthorize("hasRole('SERVICE')")
+    @ApiResponse(responseCode = "200", description = "Синхронизация свойств ОИС выполнена")
+    @CommonSecurityResponses
+    @InternalServerErrorResponse
+    fun syncKlfOipProperties(@RequestBody req: String): Int? = service.syncKlfOipProperties(req)
+
     @PostMapping("/syncKlfOipHierarchy")
     @Operation(summary = "Синхронизация таблицы KLF_OIP_HIERARCHY")
     @PreAuthorize("hasRole('SERVICE')")
