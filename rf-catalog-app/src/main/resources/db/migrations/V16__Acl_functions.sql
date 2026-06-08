@@ -25,13 +25,20 @@ DO $$
     END;
 $$;
 
+DROP FUNCTION IF EXISTS pkg_pge.update_property(
+    p_code_pg character varying,
+    p_property character varying,
+    p_id_entity bigint,
+    p_value character varying,
+    p_username character varying);
+
 CREATE OR REPLACE FUNCTION pkg_pge.update_property(
     p_code_pg character varying,
     p_property character varying,
     p_id_entity bigint,
     p_value character varying,
     p_username character varying DEFAULT 'admin'::character varying)
-    RETURNS TABLE(id_entity bigint, id integer, id_pgl integer, id_property integer, pg_order integer, code_prop character varying, name_prop character varying, id_prop_type integer, name_prop_type character varying, property_value character varying, use_multi_select boolean, display_value text)
+    RETURNS TABLE(id_entity bigint, id integer, id_pgl integer, id_property integer, pg_order integer, code_prop character varying, name_prop character varying, id_prop_type integer, name_prop_type character varying, property_value text, use_multi_select boolean, display_value text)
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE SECURITY DEFINER PARALLEL UNSAFE
