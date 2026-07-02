@@ -38,6 +38,8 @@ spec:
       labels:
         app: rf-catalog-svc
       annotations:
+        kubernetes.io/container-log-max-files: "3"
+        kubernetes.io/container-log-max-size: 50Mi
         prometheus.io/scrape: "true"
         prometheus.io/path: "/api/catalog/v1/actuator/prometheus"
         prometheus.io/port: "8081" # <-- порт приложения

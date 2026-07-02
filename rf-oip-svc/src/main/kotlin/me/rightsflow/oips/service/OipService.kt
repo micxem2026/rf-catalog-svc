@@ -246,12 +246,106 @@ class OipService(
     }
 
     /**
+     * Получить ROOT_ID узла (корень всего дерева иерархии, к которому принадлежит oipId)
+     */
+    private fun getRootId(oipId: Int): Int {
+        return (em.createNativeQuery("SELECT root_id FROM klf_oip WHERE id = :id")
+            .setParameter("id", oipId)
+            .singleResult as Number).toInt()
+    }
+
+    /**
+     * Посчитать абсолютный уровень иерархии (глубину от корня rootId) для заданного набора id.
+     * Уровень корня = 0, уровень его непосредственных потомков = 1 и т.д.
+     */
+    private fun findLevelsFromRoot(rootId: Int, ids: List<Int>): Map<Int, Int> {
+        @Suppress("UNCHECKED_CAST")
+        val result = em.createNativeQuery(
+            """
+        WITH RECURSIVE levels AS (
+            SELECT id, 0 AS lvl
+            FROM klf_oip
+            WHERE id = :rootId
+
+            UNION ALL
+
+            SELECT h.id_oip, l.lvl + 1
+            FROM klf_oip_hierarchy h
+            INNER JOIN levels l ON l.id = h.id_parent
+        )
+        SELECT id, MIN(lvl) AS lvl
+        FROM levels
+        WHERE id = ANY(:ids)
+        GROUP BY id
+        """
+        )
+            .setParameter("rootId", rootId)
+            .setParameter("ids", ids.toTypedArray())
+            .resultList as List<Array<Any>>
+
+        return result.associate { (it[0] as Number).toInt() to (it[1] as Number).toInt() }
+    }
+
+    /**
      * Получить все ОИС в иерархии заданного ОИС
      * @param oipId ID искомого ОИС
      * @param direction направление обхода (UP/DOWN/BOTH)
      * @return список всех ОИС из иерархии
      */
     fun findAllInHierarchy(
+        oipId: Int,
+        direction: Oip.HierarchyDirection = Oip.HierarchyDirection.BOTH
+    ): List<OipDto> {
+        // Проверяем что OIP существует
+        if (!repo.existsById(oipId)) {
+            throw EntityNotFoundWithClsException(oipId, Oip::class.java)
+        }
+
+        // Получаем все ID в иерархии в зависимости от направления
+        val hierarchyIds = when (direction) {
+            Oip.HierarchyDirection.UP -> findAncestorIds(oipId)
+            Oip.HierarchyDirection.DOWN -> findDescendantIds(oipId)
+            Oip.HierarchyDirection.BOTH -> findAllHierarchyIds(oipId)
+        }
+
+        if (hierarchyIds.isEmpty()) {
+            return emptyList()
+        }
+
+        // Загружаем все OIP по найденным ID (без ORDER BY — отсортируем ниже по абсолютному уровню)
+        val oips = em.createQuery(
+            """
+        SELECT o FROM Oip o
+        LEFT JOIN FETCH o.oipSuperType
+        LEFT JOIN FETCH o.oipType
+        WHERE o.id IN :ids
+        """,
+            Oip::class.java
+        )
+            .setParameter("ids", hierarchyIds)
+            .resultList
+
+        // Абсолютный уровень считаем от корня всего дерева (ROOT_ID), а не от oipId,
+        // чтобы сортировка была корректной и для UP, и для DOWN, и для BOTH
+        val rootId = getRootId(oipId)
+        val levelMap = findLevelsFromRoot(rootId, hierarchyIds)
+
+        // Сортировка: сначала по абсолютному уровню иерархии, затем по id
+        val sortedOips = oips.sortedWith(
+            compareBy({ levelMap[it.id] ?: Int.MAX_VALUE }, { it.id })
+        )
+
+        // Получаем родителей для всех OIP одним запросом
+        val parentsMap = getParentsMapForOips(sortedOips.mapNotNull { it.id })
+
+        return sortedOips.map { oip ->
+            val parents = parentsMap[oip.id] ?: emptyList()
+            oip.toDto(parents)
+        }
+    }
+
+    @Deprecated("Use findAllInHierarchy instead")
+    fun findAllInHierarchyOld(
         oipId: Int,
         direction: Oip.HierarchyDirection = Oip.HierarchyDirection.BOTH
     ): List<OipDto> {
